@@ -3,6 +3,7 @@ import { VentureData } from '../types';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { ArrowUpRight, Building2, Target, Eye, Globe } from 'lucide-react';
 import { Button } from './Button';
+import { motion } from 'motion/react';
 
 interface VentureCardProps {
   venture: VentureData;
@@ -10,11 +11,17 @@ interface VentureCardProps {
 
 export const VentureCard: React.FC<VentureCardProps> = ({ venture }) => {
   return (
-    <div className="bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880]/50 transition-all duration-300 shadow-xl overflow-hidden flex flex-col justify-between group">
-      
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-20px' }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.35 }}
+      className="bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880]/60 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#c5a880]/10 overflow-hidden flex flex-col justify-between group h-full"
+    >
       <div>
         {/* Top Image Banner */}
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <ImagePlaceholder
             src={venture.image}
             alt={venture.company}
@@ -22,9 +29,10 @@ export const VentureCard: React.FC<VentureCardProps> = ({ venture }) => {
             category={venture.role}
             iconType="building"
             aspectRatio="aspect-[16/9]"
+            className="transition-transform duration-700 group-hover:scale-105"
           />
           
-          <div className="absolute top-4 left-4 bg-[#0d0f12]/80 backdrop-blur-md px-3 py-1 rounded-xs border border-[#c5a880]/30 text-xs font-mono text-[#c5a880]">
+          <div className="absolute top-4 left-4 bg-[#0d0f12]/80 backdrop-blur-md px-3 py-1 rounded-xs border border-[#c5a880]/30 text-xs font-mono text-[#c5a880] font-semibold">
             {venture.role}
           </div>
         </div>
@@ -92,6 +100,7 @@ export const VentureCard: React.FC<VentureCardProps> = ({ venture }) => {
         </Button>
       </div>
 
-    </div>
+    </motion.div>
   );
 };
+

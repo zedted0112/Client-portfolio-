@@ -2,6 +2,7 @@ import React from 'react';
 import { GalleryItemData } from '../types';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { Maximize2, Sparkles } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface GalleryItemProps {
   item: GalleryItemData;
@@ -10,9 +11,14 @@ interface GalleryItemProps {
 
 export const GalleryItem: React.FC<GalleryItemProps> = ({ item, onClick }) => {
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true, margin: '-20px' }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.35 }}
       onClick={onClick}
-      className="group relative bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880] transition-all duration-300 overflow-hidden cursor-pointer shadow-lg"
+      className="group relative bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880] transition-all duration-300 overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-[#c5a880]/15"
     >
       <ImagePlaceholder
         src={item.src}
@@ -21,6 +27,7 @@ export const GalleryItem: React.FC<GalleryItemProps> = ({ item, onClick }) => {
         category={item.category}
         iconType="gallery"
         aspectRatio={item.aspectRatio || "aspect-[4/3]"}
+        className="transition-transform duration-700 group-hover:scale-105"
       />
 
       {/* Hover Overlay */}
@@ -33,7 +40,7 @@ export const GalleryItem: React.FC<GalleryItemProps> = ({ item, onClick }) => {
         </div>
 
         <div>
-          <span className="text-[10px] font-mono uppercase tracking-widest text-[#c5a880] mb-1 block">
+          <span className="text-[10px] font-mono uppercase tracking-widest text-[#c5a880] mb-1 block font-semibold">
             {item.category}
           </span>
           <p className="text-sm font-serif-title font-medium text-[#f3f2ee] line-clamp-2 leading-snug">
@@ -42,6 +49,7 @@ export const GalleryItem: React.FC<GalleryItemProps> = ({ item, onClick }) => {
         </div>
 
       </div>
-    </div>
+    </motion.div>
   );
 };
+

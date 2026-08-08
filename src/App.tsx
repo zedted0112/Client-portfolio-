@@ -14,10 +14,11 @@ import { SocialSection } from './components/SocialSection';
 import { Gallery } from './components/Gallery';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
+import { MobileNavigationDock } from './components/MobileNavigationDock';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#0d0f12] text-[#e8e6e1] font-sans selection:bg-[#c5a880] selection:text-[#0d0f12]">
+    <div className="min-h-screen bg-[#0d0f12] text-[#e8e6e1] font-sans selection:bg-[#c5a880] selection:text-[#0d0f12] pb-12 md:pb-0">
       
       {/* Top Navbar */}
       <Navbar
@@ -77,6 +78,10 @@ export default function App() {
         personalTitle={siteData.personal.title}
       />
 
+      {/* Mobile Floating Quick Dock */}
+      <MobileNavigationDock />
+
     </div>
   );
 }
+

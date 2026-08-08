@@ -11,6 +11,7 @@ import {
   Leaf,
   Sparkles
 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface PhilosophyCardProps {
   item: PhilosophyItem;
@@ -32,11 +33,20 @@ export const PhilosophyCard: React.FC<PhilosophyCardProps> = ({ item }) => {
   };
 
   return (
-    <div className="bg-[#14171f] p-6 sm:p-8 rounded-sm border border-[#232835] hover:border-[#c5a880]/50 transition-all duration-300 shadow-xl flex flex-col justify-between group">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-20px' }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.35 }}
+      className="bg-[#14171f] p-6 sm:p-8 rounded-sm border border-[#232835] hover:border-[#c5a880]/60 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#c5a880]/10 flex flex-col justify-between group h-full relative overflow-hidden"
+    >
+      <div className="absolute top-0 right-0 w-24 h-24 bg-[#c5a880]/5 rounded-bl-full pointer-events-none group-hover:bg-[#c5a880]/10 transition-colors" />
+
       <div>
         {/* Top Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="p-3 bg-[#1c212c] rounded-sm border border-[#c5a880]/30 group-hover:border-[#c5a880] transition-colors">
+        <div className="flex items-center justify-between mb-6 relative z-10">
+          <div className="p-3 bg-[#1c212c] rounded-sm border border-[#c5a880]/30 group-hover:border-[#c5a880] transition-colors shadow-inner">
             {getIcon(item.iconName)}
           </div>
           <span className="text-2xl font-serif-title font-bold text-[#c5a880]/40 font-mono">
@@ -55,10 +65,11 @@ export const PhilosophyCard: React.FC<PhilosophyCardProps> = ({ item }) => {
         </p>
       </div>
 
-      <div className="mt-6 pt-4 border-t border-[#202532] flex items-center gap-1.5 text-[10px] font-mono text-[#8c92a0] uppercase tracking-wider">
+      <div className="mt-6 pt-4 border-t border-[#202532] flex items-center gap-1.5 text-[10px] font-mono text-[#8c92a0] uppercase tracking-wider relative z-10">
         <span className="w-1.5 h-1.5 rounded-full bg-[#c5a880]" />
         <span>Leadership Pillar 0{item.number}</span>
       </div>
-    </div>
+    </motion.div>
   );
 };
+

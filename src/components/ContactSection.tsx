@@ -3,6 +3,7 @@ import { SectionHeading } from './SectionHeading';
 import { ContactData } from '../types';
 import { Mail, Phone, Linkedin, MapPin, Send, CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { Button } from './Button';
+import { motion } from 'motion/react';
 
 interface ContactSectionProps {
   contact: ContactData;
@@ -46,7 +47,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
           
           {/* Left Column: Direct Contact Info & Office Address */}
-          <div className="lg:col-span-5 flex flex-col gap-6">
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-5 flex flex-col gap-6"
+          >
             
             {/* Direct Cards */}
             <div className="bg-[#14171f] p-6 rounded-sm border border-[#232835] hover:border-[#c5a880]/40 transition-colors shadow-xl space-y-6">
@@ -141,10 +148,16 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
               )}
             </div>
 
-          </div>
+          </motion.div>
 
           {/* Right Column: Interactive Executive Contact Form */}
-          <div className="lg:col-span-7 bg-[#14171f] p-8 sm:p-10 rounded-sm border border-[#232835] shadow-2xl relative">
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-7 bg-[#14171f] p-8 sm:p-10 rounded-sm border border-[#232835] shadow-2xl relative"
+          >
             <h3 className="text-2xl font-serif-title font-semibold text-[#f3f2ee] mb-2">
               Send a Direct Message
             </h3>
@@ -235,7 +248,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
               </form>
             )}
 
-          </div>
+          </motion.div>
 
         </div>
 
@@ -243,3 +256,4 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
     </section>
   );
 };
+

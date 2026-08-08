@@ -2,6 +2,7 @@ import React from 'react';
 import { JourneyItemData } from '../types';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { MapPin, CheckCircle2 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface JourneyItemProps {
   item: JourneyItemData;
@@ -14,15 +15,31 @@ export const JourneyItem: React.FC<JourneyItemProps> = ({ item, isEven }) => {
     <div className="relative mb-12 lg:mb-20 last:mb-0">
       
       {/* Timeline Node Point for Desktop */}
-      <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 top-6 w-8 h-8 rounded-full bg-[#181c24] border-2 border-[#c5a880] items-center justify-center z-20 shadow-lg shadow-[#c5a880]/20">
-        <div className="w-2.5 h-2.5 rounded-full bg-[#c5a880]" />
-      </div>
+      <motion.div
+        initial={{ scale: 0.5, opacity: 0 }}
+        whileInView={{ scale: 1, opacity: 1 }}
+        viewport={{ once: true, margin: '-50px' }}
+        transition={{ duration: 0.4 }}
+        className="hidden lg:flex absolute left-1/2 -translate-x-1/2 top-6 w-8 h-8 rounded-full bg-[#181c24] border-2 border-[#c5a880] items-center justify-center z-20 shadow-lg shadow-[#c5a880]/30"
+      >
+        <motion.div
+          animate={{ scale: [1, 1.25, 1] }}
+          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-2.5 h-2.5 rounded-full bg-[#c5a880]"
+        />
+      </motion.div>
 
       <div className={`grid grid-cols-1 lg:grid-cols-12 gap-8 items-center ${isEven ? '' : 'lg:direction-rtl'}`}>
         
         {/* Content Box */}
-        <div className={`lg:col-span-6 ${isEven ? 'lg:pr-12 lg:text-right' : 'lg:pl-12 lg:text-left lg:order-2'}`}>
-          <div className="bg-[#14171f] p-6 sm:p-8 rounded-sm border border-[#232835] hover:border-[#c5a880]/40 transition-all duration-300 shadow-xl group">
+        <motion.div
+          initial={{ opacity: 0, x: isEven ? -30 : 30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className={`lg:col-span-6 ${isEven ? 'lg:pr-12 lg:text-right' : 'lg:pl-12 lg:text-left lg:order-2'}`}
+        >
+          <div className="bg-[#14171f] p-6 sm:p-8 rounded-sm border border-[#232835] hover:border-[#c5a880]/60 transition-all duration-300 shadow-xl group hover:shadow-2xl hover:shadow-[#c5a880]/10">
             
             {/* Year & Location Header */}
             <div className={`flex flex-wrap items-center gap-3 mb-4 ${isEven ? 'lg:justify-end' : 'lg:justify-start'}`}>
@@ -58,10 +75,16 @@ export const JourneyItem: React.FC<JourneyItemProps> = ({ item, isEven }) => {
             )}
 
           </div>
-        </div>
+        </motion.div>
 
         {/* Image Box */}
-        <div className={`lg:col-span-6 ${isEven ? 'lg:pl-12' : 'lg:pr-12 lg:order-1'}`}>
+        <motion.div
+          initial={{ opacity: 0, x: isEven ? 30 : -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className={`lg:col-span-6 ${isEven ? 'lg:pl-12' : 'lg:pr-12 lg:order-1'}`}
+        >
           <div className="relative bg-[#14171f] p-2 rounded-sm border border-[#232835] shadow-xl overflow-hidden group">
             <ImagePlaceholder
               src={item.image}
@@ -70,12 +93,13 @@ export const JourneyItem: React.FC<JourneyItemProps> = ({ item, isEven }) => {
               category={item.location}
               iconType="building"
               aspectRatio="aspect-[16/10]"
-              className="rounded-xs"
+              className="rounded-xs transition-transform duration-700 group-hover:scale-105"
             />
           </div>
-        </div>
+        </motion.div>
 
       </div>
     </div>
   );
 };
+

@@ -2,6 +2,7 @@ import React from 'react';
 import { SocialPostData } from '../types';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { Linkedin, ArrowUpRight, Share2 } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface SocialCardProps {
   post: SocialPostData;
@@ -9,7 +10,14 @@ interface SocialCardProps {
 
 export const SocialCard: React.FC<SocialCardProps> = ({ post }) => {
   return (
-    <div className="bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880]/50 transition-all duration-300 shadow-xl overflow-hidden flex flex-col justify-between group">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-20px' }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.35 }}
+      className="bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880]/60 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#c5a880]/10 overflow-hidden flex flex-col justify-between group h-full"
+    >
       <div>
         <ImagePlaceholder
           src={post.image}
@@ -18,11 +26,12 @@ export const SocialCard: React.FC<SocialCardProps> = ({ post }) => {
           category={post.platform}
           iconType="news"
           aspectRatio="aspect-[16/9]"
+          className="transition-transform duration-700 group-hover:scale-105"
         />
 
         <div className="p-6 space-y-3">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-1.5 text-xs font-mono text-[#0077b5]">
+            <div className="flex items-center gap-1.5 text-xs font-mono text-[#0077b5] font-semibold">
               <Linkedin className="w-4 h-4" />
               <span>{post.platform} Insight</span>
             </div>
@@ -68,6 +77,7 @@ export const SocialCard: React.FC<SocialCardProps> = ({ post }) => {
           <ArrowUpRight className="w-3.5 h-3.5" />
         </a>
       </div>
-    </div>
+    </motion.div>
   );
 };
+

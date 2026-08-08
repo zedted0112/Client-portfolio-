@@ -2,6 +2,7 @@ import React from 'react';
 import { ProjectData } from '../types';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { MapPin, CheckCircle2, DollarSign, Building } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface ProjectCardProps {
   project: ProjectData;
@@ -9,11 +10,17 @@ interface ProjectCardProps {
 
 export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
   return (
-    <div className="bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880]/50 transition-all duration-300 shadow-xl overflow-hidden flex flex-col justify-between group">
-      
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-30px' }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+      className="bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880]/60 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#c5a880]/10 overflow-hidden flex flex-col justify-between group h-full"
+    >
       <div>
         {/* Project Thumbnail Image */}
-        <div className="relative">
+        <div className="relative overflow-hidden">
           <ImagePlaceholder
             src={project.image}
             alt={project.title}
@@ -21,11 +28,12 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             category={project.category}
             iconType="building"
             aspectRatio="aspect-[16/10]"
+            className="transition-transform duration-700 group-hover:scale-105"
           />
 
           {/* Value Badge */}
           {project.value && (
-            <div className="absolute top-4 right-4 bg-[#0d0f12]/90 backdrop-blur-md px-3 py-1 rounded-xs border border-[#c5a880]/40 text-xs font-mono font-bold text-[#c5a880]">
+            <div className="absolute top-4 right-4 bg-[#0d0f12]/90 backdrop-blur-md px-3 py-1 rounded-xs border border-[#c5a880]/40 text-xs font-mono font-bold text-[#c5a880] shadow-md">
               {project.value}
             </div>
           )}
@@ -68,6 +76,7 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
         <span className="text-[#c5a880] font-medium">{project.category}</span>
       </div>
 
-    </div>
+    </motion.div>
   );
 };
+

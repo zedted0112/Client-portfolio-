@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'motion/react';
 
 interface SectionHeadingProps {
   eyebrow?: string;
@@ -22,10 +23,22 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
   }[align];
 
   return (
-    <div className={`flex flex-col ${alignmentClass} max-w-3xl mb-12 sm:mb-16 ${className}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-50px' }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className={`flex flex-col ${alignmentClass} max-w-3xl mb-12 sm:mb-16 ${className}`}
+    >
       {eyebrow && (
         <div className="flex items-center gap-2 mb-3">
-          <span className="h-[1px] w-6 bg-[#c5a880]" />
+          <motion.span
+            initial={{ width: 0 }}
+            whileInView={{ width: 24 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="h-[1px] bg-[#c5a880]"
+          />
           <span className="text-[11px] sm:text-xs font-mono uppercase tracking-[0.25em] text-[#c5a880] font-semibold">
             {eyebrow}
           </span>
@@ -41,6 +54,7 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
           {subtitle}
         </p>
       )}
-    </div>
+    </motion.div>
   );
 };
+

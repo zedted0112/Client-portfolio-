@@ -1,7 +1,8 @@
 import React from 'react';
-import { ArrowUpRight, Building2, ShieldCheck, Briefcase } from 'lucide-react';
+import { ArrowUpRight, Building2, ShieldCheck, Briefcase, Award, Sparkles } from 'lucide-react';
 import { Button } from './Button';
 import { ImagePlaceholder } from './ImagePlaceholder';
+import { motion } from 'motion/react';
 
 interface HeroProps {
   eyebrow: string;
@@ -22,38 +23,70 @@ export const Hero: React.FC<HeroProps> = ({
   tertiaryCta,
   image
 }) => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.12,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 25 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+  };
+
   return (
     <section id="hero" className="relative pt-28 sm:pt-36 pb-16 sm:pb-24 overflow-hidden bg-[#0d0f12] bg-grain border-b border-[#1e232e]">
       {/* Background Decorative Lighting Gradients */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#c5a880]/5 blur-[140px] pointer-events-none rounded-full" />
+      <motion.div
+        animate={{
+          scale: [1, 1.15, 1],
+          opacity: [0.05, 0.09, 0.05],
+        }}
+        transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+        className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#c5a880]/10 blur-[140px] pointer-events-none rounded-full"
+      />
       <div className="absolute -top-10 left-10 w-72 h-72 bg-[#1f2636]/30 blur-[100px] pointer-events-none rounded-full" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+          className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center"
+        >
           
           {/* Left Hero Content */}
           <div className="lg:col-span-7 flex flex-col items-start">
             
             {/* Eyebrow */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#181c24] border border-[#c5a880]/30 text-[#c5a880] text-xs font-mono tracking-wider uppercase mb-6 shadow-sm">
+            <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#181c24] border border-[#c5a880]/30 text-[#c5a880] text-xs font-mono tracking-wider uppercase mb-6 shadow-sm">
               <span className="w-2 h-2 rounded-full bg-[#c5a880] animate-pulse" />
               <span>{eyebrow}</span>
-            </div>
+            </motion.div>
 
             {/* Headline */}
-            <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-serif-title font-normal text-[#f3f2ee] tracking-tight leading-[1.1] mb-6">
+            <motion.h1 variants={itemVariants} className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-serif-title font-normal text-[#f3f2ee] tracking-tight leading-[1.1] mb-6">
               Build Trust.<br />
               <span className="text-[#c5a880] italic">Create Value.</span><br />
               Leave a Legacy.
-            </h1>
+            </motion.h1>
 
             {/* Subheadline */}
-            <p className="text-base sm:text-lg text-[#a2a8b8] font-sans-body font-light leading-relaxed max-w-2xl mb-8">
+            <motion.p variants={itemVariants} className="text-base sm:text-lg text-[#a2a8b8] font-sans-body font-light leading-relaxed max-w-2xl mb-8">
               {subheadline}
-            </p>
+            </motion.p>
 
             {/* CTAs */}
-            <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-10">
+            <motion.div variants={itemVariants} className="flex flex-wrap items-center gap-3 sm:gap-4 mb-10">
               <Button href={primaryCta.href} variant="primary" size="lg" showIcon>
                 {primaryCta.text}
               </Button>
@@ -63,10 +96,10 @@ export const Hero: React.FC<HeroProps> = ({
               <Button href={tertiaryCta.href} variant="ghost" size="lg">
                 {tertiaryCta.text}
               </Button>
-            </div>
+            </motion.div>
 
             {/* Trust Badges */}
-            <div className="pt-8 border-t border-[#202532] w-full grid grid-cols-3 gap-4 text-left">
+            <motion.div variants={itemVariants} className="pt-8 border-t border-[#202532] w-full grid grid-cols-3 gap-4 text-left">
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5 text-[#c5a880] text-xs font-mono uppercase mb-1">
                   <Building2 className="w-3.5 h-3.5" />
@@ -88,18 +121,22 @@ export const Hero: React.FC<HeroProps> = ({
                 </div>
                 <span className="text-xs text-[#8c92a0]">Prime Mumbai Focus</span>
               </div>
-            </div>
+            </motion.div>
 
           </div>
 
-          {/* Right Hero Image Frame */}
-          <div className="lg:col-span-5 relative">
+          {/* Right Hero Image Frame with Parallax & Motion */}
+          <motion.div variants={itemVariants} className="lg:col-span-5 relative">
             <div className="relative mx-auto max-w-md lg:max-w-none">
               
               {/* Outer Architectural Border Accent */}
-              <div className="absolute -inset-2 rounded-sm bg-gradient-to-tr from-[#c5a880]/30 via-transparent to-[#282f3d]/60 blur-xs" />
+              <div className="absolute -inset-2 rounded-sm bg-gradient-to-tr from-[#c5a880]/40 via-transparent to-[#282f3d]/60 blur-xs" />
 
-              <div className="relative bg-[#14171f] p-3 sm:p-4 rounded-sm border border-[#2a303f] shadow-2xl">
+              <motion.div
+                whileHover={{ scale: 1.01 }}
+                transition={{ duration: 0.3 }}
+                className="relative bg-[#14171f] p-3 sm:p-4 rounded-sm border border-[#2a303f] shadow-2xl overflow-hidden group"
+              >
                 <ImagePlaceholder
                   src={image}
                   alt="Nitesh M. Gangaramani - Managing Director Nyshaa Realty"
@@ -107,36 +144,43 @@ export const Hero: React.FC<HeroProps> = ({
                   category="Managing Director & Founder"
                   iconType="user"
                   aspectRatio="aspect-[4/5]"
-                  className="rounded-xs"
+                  className="rounded-xs transition-transform duration-700 group-hover:scale-105"
                 />
 
                 {/* Floating Executive Tag */}
-                <div className="absolute bottom-6 left-6 right-6 p-4 bg-[#0d0f12]/90 backdrop-blur-md border border-[#c5a880]/40 rounded-sm shadow-xl">
+                <motion.div
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.6, duration: 0.6 }}
+                  className="absolute bottom-6 left-6 right-6 p-4 bg-[#0d0f12]/90 backdrop-blur-md border border-[#c5a880]/40 rounded-sm shadow-xl"
+                >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-serif-title font-semibold text-[#f3f2ee]">
+                      <p className="text-sm font-serif-title font-semibold text-[#f3f2ee] flex items-center gap-1.5">
                         Nitesh M. Gangaramani
+                        <Sparkles className="w-3.5 h-3.5 text-[#c5a880]" />
                       </p>
                       <p className="text-[11px] text-[#c5a880] font-sans-body">
                         Managing Director · Nyshaa Realty
                       </p>
                     </div>
-                    <span className="text-[10px] font-mono text-[#8a91a0] px-2 py-1 bg-[#1a1e27] border border-[#2d3444] rounded-xs">
+                    <span className="text-[10px] font-mono text-[#8a91a0] px-2 py-1 bg-[#1a1e27] border border-[#2d3444] rounded-xs font-semibold">
                       20+ YRS
                     </span>
                   </div>
-                </div>
-              </div>
+                </motion.div>
+              </motion.div>
 
               {/* Decorative Corner Accents */}
-              <div className="absolute -top-4 -right-4 w-12 h-12 border-t-2 border-r-2 border-[#c5a880]/60 pointer-events-none" />
-              <div className="absolute -bottom-4 -left-4 w-12 h-12 border-b-2 border-l-2 border-[#c5a880]/60 pointer-events-none" />
+              <div className="absolute -top-4 -right-4 w-12 h-12 border-t-2 border-r-2 border-[#c5a880]/80 pointer-events-none" />
+              <div className="absolute -bottom-4 -left-4 w-12 h-12 border-b-2 border-l-2 border-[#c5a880]/80 pointer-events-none" />
 
             </div>
-          </div>
+          </motion.div>
 
-        </div>
+        </motion.div>
       </div>
     </section>
   );
 };
+

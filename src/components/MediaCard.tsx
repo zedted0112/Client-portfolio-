@@ -2,6 +2,7 @@ import React from 'react';
 import { MediaArticleData } from '../types';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { Newspaper, ExternalLink, ArrowUpRight } from 'lucide-react';
+import { motion } from 'motion/react';
 
 interface MediaCardProps {
   article: MediaArticleData;
@@ -9,7 +10,14 @@ interface MediaCardProps {
 
 export const MediaCard: React.FC<MediaCardProps> = ({ article }) => {
   return (
-    <div className="bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880]/50 transition-all duration-300 shadow-xl overflow-hidden flex flex-col justify-between group">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-20px' }}
+      whileHover={{ y: -6 }}
+      transition={{ duration: 0.35 }}
+      className="bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880]/60 transition-all duration-300 shadow-xl hover:shadow-2xl hover:shadow-[#c5a880]/10 overflow-hidden flex flex-col justify-between group h-full"
+    >
       <div>
         <ImagePlaceholder
           src={article.image}
@@ -18,11 +26,12 @@ export const MediaCard: React.FC<MediaCardProps> = ({ article }) => {
           category={article.publication}
           iconType="news"
           aspectRatio="aspect-[16/9]"
+          className="transition-transform duration-700 group-hover:scale-105"
         />
 
         <div className="p-6 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-mono text-[#c5a880] uppercase tracking-wider">
+            <span className="text-xs font-mono text-[#c5a880] uppercase tracking-wider font-semibold">
               {article.publication}
             </span>
             <span className="text-xs font-mono text-[#8c92a0]">
@@ -56,6 +65,7 @@ export const MediaCard: React.FC<MediaCardProps> = ({ article }) => {
           <span className="text-[#8c92a0]/60 italic">Featured Media</span>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };
+
