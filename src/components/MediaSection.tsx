@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { MediaCard } from './MediaCard';
 import { MediaArticleData } from '../types';
-import { ChevronLeft, ChevronRight, Newspaper } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Newspaper, Hand, MoveHorizontal } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface MediaSectionProps {
@@ -11,15 +11,72 @@ interface MediaSectionProps {
 
 export const MediaSection: React.FC<MediaSectionProps> = ({ articles }) => {
   const [mobileIndex, setMobileIndex] = useState(0);
+  const [direction, setDirection] = useState<number>(0);
+
+  // Touch Swipe State
+  const touchStartX = useRef<number | null>(null);
+  const touchEndX = useRef<number | null>(null);
 
   const activeArticle = articles[mobileIndex];
 
   const handlePrev = () => {
+    setDirection(-1);
     setMobileIndex((prev) => (prev > 0 ? prev - 1 : articles.length - 1));
   };
 
   const handleNext = () => {
+    setDirection(1);
     setMobileIndex((prev) => (prev < articles.length - 1 ? prev + 1 : 0));
+  };
+
+  // Hand Touch Swipe Handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchEndX.current = null;
+    touchStartX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.targetTouches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return;
+    const distance = touchStartX.current - touchEndX.current;
+    const isLeftSwipe = distance > 40;
+    const isRightSwipe = distance < -40;
+
+    if (isLeftSwipe) {
+      handleNext();
+    } else if (isRightSwipe) {
+      handlePrev();
+    }
+  };
+
+  // Framer Motion Drag Handler
+  const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    if (info.offset.x < -40) {
+      handleNext();
+    } else if (info.offset.x > 40) {
+      handlePrev();
+    }
+  };
+
+  const variants = {
+    enter: (dir: number) => ({
+      x: dir > 0 ? 80 : -80,
+      opacity: 0,
+      scale: 0.96,
+    }),
+    center: {
+      x: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    exit: (dir: number) => ({
+      x: dir < 0 ? 80 : -80,
+      opacity: 0,
+      scale: 0.96,
+    }),
   };
 
   return (
@@ -36,29 +93,51 @@ export const MediaSection: React.FC<MediaSectionProps> = ({ articles }) => {
         <div className="block md:hidden">
           <div className="space-y-4">
             <div className="flex items-center justify-between text-xs font-mono text-[#c5a880]">
-              <span className="flex items-center gap-1">
+              <span className="flex items-center gap-1.5 font-semibold">
                 <Newspaper className="w-3.5 h-3.5" /> Article {mobileIndex + 1} of {articles.length}
               </span>
-              <span className="text-[#6b7280]">Swipe or tap</span>
+
+              {/* Hand Touch Swipe Hint Indicator */}
+              <div className="flex items-center gap-1 text-[11px] text-[#c5a880] bg-[#c5a880]/10 border border-[#c5a880]/30 px-2.5 py-0.5 rounded-full animate-pulse">
+                <Hand className="w-3 h-3 text-[#c5a880]" />
+                <span>Swipe left / right</span>
+                <MoveHorizontal className="w-3 h-3 text-[#c5a880]" />
+              </div>
             </div>
 
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeArticle.id}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-              >
-                <MediaCard article={activeArticle} />
-              </motion.div>
-            </AnimatePresence>
+            {/* Touch & Drag Swipeable Card Wrapper */}
+            <div
+              onTouchStart={handleTouchStart}
+              onTouchMove={handleTouchMove}
+              onTouchEnd={handleTouchEnd}
+              className="touch-pan-y cursor-grab active:cursor-grabbing select-none relative"
+            >
+              <AnimatePresence mode="wait" custom={direction}>
+                <motion.div
+                  key={activeArticle.id}
+                  custom={direction}
+                  variants={variants}
+                  initial="enter"
+                  animate="center"
+                  exit="exit"
+                  transition={{ duration: 0.28, ease: 'easeOut' }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.15}
+                  onDragEnd={handleDragEnd}
+                  className="w-full"
+                >
+                  <MediaCard article={activeArticle} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
             {/* Controls */}
             <div className="flex items-center justify-between pt-4 border-t border-[#232835]">
               <button
                 onClick={handlePrev}
-                className="p-2.5 rounded bg-[#161a24] text-[#c5a880] border border-[#2d364a] text-xs font-mono flex items-center gap-1"
+                aria-label="Previous article"
+                className="p-2.5 rounded bg-[#161a24] text-[#c5a880] border border-[#2d364a] hover:border-[#c5a880] text-xs font-mono flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-transform"
               >
                 <ChevronLeft className="w-4 h-4" />
                 <span>Prev</span>
@@ -68,9 +147,13 @@ export const MediaSection: React.FC<MediaSectionProps> = ({ articles }) => {
                 {articles.map((_, idx) => (
                   <button
                     key={idx}
-                    onClick={() => setMobileIndex(idx)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      mobileIndex === idx ? 'w-5 bg-[#c5a880]' : 'w-1.5 bg-[#2c3344]'
+                    onClick={() => {
+                      setDirection(idx > mobileIndex ? 1 : -1);
+                      setMobileIndex(idx);
+                    }}
+                    aria-label={`Go to article ${idx + 1}`}
+                    className={`h-2 rounded-full transition-all cursor-pointer ${
+                      mobileIndex === idx ? 'w-6 bg-[#c5a880]' : 'w-2 bg-[#2c3344] hover:bg-[#8c92a0]'
                     }`}
                   />
                 ))}
@@ -78,7 +161,8 @@ export const MediaSection: React.FC<MediaSectionProps> = ({ articles }) => {
 
               <button
                 onClick={handleNext}
-                className="p-2.5 rounded bg-[#161a24] text-[#c5a880] border border-[#2d364a] text-xs font-mono flex items-center gap-1"
+                aria-label="Next article"
+                className="p-2.5 rounded bg-[#161a24] text-[#c5a880] border border-[#2d364a] hover:border-[#c5a880] text-xs font-mono flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-transform"
               >
                 <span>Next</span>
                 <ChevronRight className="w-4 h-4" />
@@ -98,4 +182,5 @@ export const MediaSection: React.FC<MediaSectionProps> = ({ articles }) => {
     </section>
   );
 };
+
 
