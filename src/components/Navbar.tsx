@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { Menu, X, Building, ArrowUpRight } from 'lucide-react';
+import { Menu, X, Building, ArrowUpRight, Sun, Moon } from 'lucide-react';
 import { NavItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { scrollToElement } from '../utils/scroll';
+import { useTheme } from '../context/ThemeContext';
 
 interface NavbarProps {
   navItems: NavItem[];
@@ -18,6 +19,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -105,8 +107,24 @@ export const Navbar: React.FC<NavbarProps> = ({
           })}
         </nav>
 
-        {/* Header Action Button & Mobile Toggle */}
-        <div className="flex items-center gap-3">
+        {/* Header Action Button, Theme Toggle & Mobile Toggle */}
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          {/* Theme Switcher Button */}
+          <motion.button
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.92 }}
+            onClick={toggleTheme}
+            aria-label="Toggle theme"
+            title={theme === 'dark' ? 'Switch to Bright Light Mode' : 'Switch to Executive Dark Mode'}
+            className="p-2.5 rounded-sm bg-[#1a1e27] border border-[#232834] text-[#c5a880] hover:text-[#f3f2ee] hover:border-[#c5a880]/60 transition-all duration-200 shadow-sm flex items-center justify-center cursor-pointer group"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4 text-[#c5a880] group-hover:rotate-45 transition-transform duration-300" />
+            ) : (
+              <Moon className="w-4 h-4 text-[#a37c44] group-hover:-rotate-12 transition-transform duration-300" />
+            )}
+          </motion.button>
+
           <motion.a
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}

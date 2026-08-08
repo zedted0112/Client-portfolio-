@@ -1,5 +1,6 @@
 import React from 'react';
 import { siteData } from './data/data';
+import { ThemeProvider } from './context/ThemeContext';
 import { Navbar } from './components/Navbar';
 import { ScrollProgressBar } from './components/ScrollProgressBar';
 import { Hero } from './components/Hero';
@@ -19,73 +20,76 @@ import { MobileNavigationDock } from './components/MobileNavigationDock';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-[#0d0f12] text-[#e8e6e1] font-sans selection:bg-[#c5a880] selection:text-[#0d0f12] pb-12 md:pb-0">
-      
-      {/* Scroll Progress Bar */}
-      <ScrollProgressBar />
+    <ThemeProvider>
+      <div className="min-h-screen bg-[#0d0f12] text-[#e8e6e1] font-sans selection:bg-[#c5a880] selection:text-[#0d0f12] pb-12 md:pb-0">
+        
+        {/* Scroll Progress Bar */}
+        <ScrollProgressBar />
 
-      {/* Top Navbar */}
-      <Navbar
-        navItems={siteData.navigation}
-        personalName={siteData.personal.name}
-        personalTitle={siteData.personal.title}
-      />
+        {/* Top Navbar */}
+        <Navbar
+          navItems={siteData.navigation}
+          personalName={siteData.personal.name}
+          personalTitle={siteData.personal.title}
+        />
 
-      {/* Hero Section */}
-      <Hero
-        eyebrow={siteData.hero.eyebrow}
-        headline={siteData.hero.headline}
-        subheadline={siteData.hero.subheadline}
-        primaryCta={siteData.hero.primaryCta}
-        secondaryCta={siteData.hero.secondaryCta}
-        tertiaryCta={siteData.hero.tertiaryCta}
-        image={siteData.hero.image}
-      />
+        {/* Hero Section */}
+        <Hero
+          eyebrow={siteData.hero.eyebrow}
+          headline={siteData.hero.headline}
+          subheadline={siteData.hero.subheadline}
+          primaryCta={siteData.hero.primaryCta}
+          secondaryCta={siteData.hero.secondaryCta}
+          tertiaryCta={siteData.hero.tertiaryCta}
+          image={siteData.hero.image}
+        />
 
-      {/* Impact Statistics Strip */}
-      <StatStrip stats={siteData.stats} />
+        {/* Impact Statistics Strip */}
+        <StatStrip stats={siteData.stats} />
 
-      {/* About Me Section */}
-      <AboutSection about={siteData.about} />
+        {/* About Me Section */}
+        <AboutSection about={siteData.about} />
 
-      {/* Journey Timeline */}
-      <JourneyTimeline items={siteData.journey} />
+        {/* Journey Timeline */}
+        <JourneyTimeline items={siteData.journey} />
 
-      {/* Current Ventures */}
-      <VenturesSection ventures={siteData.ventures} />
+        {/* Current Ventures */}
+        <VenturesSection ventures={siteData.ventures} />
 
-      {/* Work Portfolio & Landmark Projects */}
-      <ProjectGrid projects={siteData.projects} />
+        {/* Work Portfolio & Landmark Projects */}
+        <ProjectGrid projects={siteData.projects} />
 
-      {/* Core Philosophy (8 Es of Business) */}
-      <PhilosophyGrid philosophy={siteData.philosophy} />
+        {/* Core Philosophy (8 Es of Business) */}
+        <PhilosophyGrid philosophy={siteData.philosophy} />
 
-      {/* Achievements & Recognition */}
-      <AchievementsSection awards={siteData.awards} />
+        {/* Achievements & Recognition */}
+        <AchievementsSection awards={siteData.awards} />
 
-      {/* Media & Press Articles */}
-      <MediaSection articles={siteData.media} />
+        {/* Media & Press Articles */}
+        <MediaSection articles={siteData.media} />
 
-      {/* Social Media, Insights & YouTube Videos */}
-      <SocialSection posts={siteData.socialPosts} videos={siteData.videos} />
+        {/* Social Media, Insights & YouTube Videos */}
+        <SocialSection posts={siteData.socialPosts} videos={siteData.videos} />
 
-      {/* Photo Gallery */}
-      <Gallery gallery={siteData.gallery} />
+        {/* Photo Gallery */}
+        <Gallery gallery={siteData.gallery} />
 
-      {/* Contact Section */}
-      <ContactSection contact={siteData.contact} />
+        {/* Contact Section */}
+        <ContactSection contact={siteData.contact} />
 
-      {/* Footer */}
-      <Footer
-        navItems={siteData.navigation}
-        personalName={siteData.personal.name}
-        personalTitle={siteData.personal.title}
-      />
+        {/* Footer */}
+        <Footer
+          navItems={siteData.navigation}
+          personalName={siteData.personal.name}
+          personalTitle={siteData.personal.title}
+        />
 
-      {/* Mobile Floating Quick Dock */}
-      <MobileNavigationDock />
+        {/* Mobile Floating Quick Dock */}
+        <MobileNavigationDock />
 
-    </div>
+      </div>
+    </ThemeProvider>
   );
 }
+
 
