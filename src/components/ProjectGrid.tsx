@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { ProjectCard } from './ProjectCard';
 import { ProjectData } from '../types';
-import { ChevronLeft, ChevronRight, Layers, Hand, MoveHorizontal } from 'lucide-react';
+import { Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface ProjectGridProps {
@@ -13,10 +13,6 @@ export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [mobileProjectIndex, setMobileProjectIndex] = useState<number>(0);
   const [direction, setDirection] = useState<number>(0);
-
-  // Touch Swipe State
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
 
   // Extract unique categories
   const categories: string[] = ['All', ...Array.from(new Set<string>(projects.map(p => p.category)))];
@@ -44,34 +40,11 @@ export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects }) => {
     setDirection(0);
   };
 
-  // Hand Touch Swipe Handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchEndX.current = null;
-    touchStartX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    const distance = touchStartX.current - touchEndX.current;
-    const isLeftSwipe = distance > 40;
-    const isRightSwipe = distance < -40;
-
-    if (isLeftSwipe) {
-      handleMobileNext();
-    } else if (isRightSwipe) {
-      handleMobilePrev();
-    }
-  };
-
   // Framer Motion Drag Handler
   const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    if (info.offset.x < -40) {
+    if (info.offset.x < -30 || info.velocity.x < -300) {
       handleMobileNext();
-    } else if (info.offset.x > 40) {
+    } else if (info.offset.x > 30 || info.velocity.x > 300) {
       handleMobilePrev();
     }
   };
@@ -130,22 +103,10 @@ export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects }) => {
                 <span className="flex items-center gap-1.5 font-semibold text-[#c5a880]">
                   <Layers className="w-3.5 h-3.5" /> Project {safeMobileIndex + 1} of {filteredProjects.length}
                 </span>
-
-                {/* Hand Touch Swipe Hint Indicator */}
-                <div className="flex items-center gap-1 text-[11px] text-[#c5a880] bg-[#c5a880]/10 border border-[#c5a880]/30 px-2.5 py-0.5 rounded-full animate-pulse">
-                  <Hand className="w-3 h-3 text-[#c5a880]" />
-                  <span>Swipe left / right</span>
-                  <MoveHorizontal className="w-3 h-3 text-[#c5a880]" />
-                </div>
               </div>
 
               {/* Touch & Drag Swipeable Card Wrapper */}
-              <div
-                onTouchStart={handleTouchStart}
-                onTouchMove={handleTouchMove}
-                onTouchEnd={handleTouchEnd}
-                className="touch-pan-y cursor-grab active:cursor-grabbing select-none relative"
-              >
+              <div className="cursor-grab active:cursor-grabbing select-none relative">
                 <AnimatePresence mode="wait" custom={direction}>
                   <motion.div
                     key={activeMobileProject.id}
@@ -166,19 +127,9 @@ export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects }) => {
                 </AnimatePresence>
               </div>
 
-              {/* Navigation Bar */}
-              <div className="flex items-center justify-between bg-[#131720] border border-[#232835] rounded-sm p-3 mt-4">
-                <button
-                  onClick={handleMobilePrev}
-                  aria-label="Previous project"
-                  className="p-2.5 rounded bg-[#1a1e2a] text-[#c5a880] hover:bg-[#c5a880] hover:text-[#0d0f12] transition-colors flex items-center gap-1.5 text-xs font-mono cursor-pointer active:scale-95"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span>Previous</span>
-                </button>
-
-                {/* Dots */}
-                <div className="flex items-center gap-1.5">
+              {/* Navigation Bar - Dots Only */}
+              <div className="flex items-center justify-center bg-[#131720] border border-[#232835] rounded-sm p-3 mt-4">
+                <div className="flex items-center gap-2">
                   {filteredProjects.map((_, idx) => (
                     <button
                       key={idx}
@@ -187,21 +138,12 @@ export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects }) => {
                         setMobileProjectIndex(idx);
                       }}
                       aria-label={`Go to project ${idx + 1}`}
-                      className={`h-2 rounded-full transition-all cursor-pointer ${
-                        safeMobileIndex === idx ? 'w-6 bg-[#c5a880]' : 'w-2 bg-[#2c3344] hover:bg-[#8c92a0]'
+                      className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                        safeMobileIndex === idx ? 'w-7 bg-[#c5a880]' : 'w-2.5 bg-[#2c3344] hover:bg-[#8c92a0]'
                       }`}
                     />
                   ))}
                 </div>
-
-                <button
-                  onClick={handleMobileNext}
-                  aria-label="Next project"
-                  className="p-2.5 rounded bg-[#1a1e2a] text-[#c5a880] hover:bg-[#c5a880] hover:text-[#0d0f12] transition-colors flex items-center gap-1.5 text-xs font-mono cursor-pointer active:scale-95"
-                >
-                  <span>Next</span>
-                  <ChevronRight className="w-4 h-4" />
-                </button>
               </div>
             </div>
           )}

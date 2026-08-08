@@ -450,7 +450,7 @@ export const siteData: SiteData = {
     {
       id: "post-redevelopment",
       title: "Redevelopment Insights & Transforming Mumbai",
-      description: "Thoughts on urban planning, real estate investment trends, commercial office markets, and how boutique redevelopment elevates living standards in key Mumbai hubs.",
+      description: "Urban planning, real estate trends, and how boutique redevelopment elevates living standards in key Mumbai hubs.",
       platform: "LinkedIn",
       url: "https://www.linkedin.com/in/niteshgangaramani",
       date: "Recent Insight",
@@ -460,7 +460,7 @@ export const siteData: SiteData = {
     {
       id: "post-2008-crisis",
       title: "Leadership Lessons from the 2008 Financial Crisis",
-      description: "Reflections on navigating real estate downturns, executing a consolidation strategy that reduced liabilities by over 75%, and successfully delivering ongoing developments during turbulent market conditions.",
+      description: "Reflections on navigating real estate downturns, cutting liabilities by 75%, and delivering projects during market volatility.",
       platform: "LinkedIn",
       url: "https://www.linkedin.com/in/niteshgangaramani",
       date: "Leadership Series",
@@ -473,24 +473,24 @@ export const siteData: SiteData = {
     {
       id: "video-signature-square",
       title: "Behind-the-scenes site visit at Signature Square",
-      description: "An exclusive walkthrough showcasing structural milestones, architectural elevation details, and quality management on site.",
-      youtubeUrl: "https://www.youtube.com/watch?v=placeholder1",
+      description: "Exclusive walkthrough showcasing structural milestones, architectural elevation details, and quality controls.",
+      youtubeUrl: "https://www.youtube.com/watch?v=M5QY2_8704o",
       duration: "04:15",
       thumbnail: "/images/videos/signature-visit.jpg"
     },
     {
       id: "video-construction-tech",
-      title: "Construction updates & technological integration in our latest projects",
-      description: "Exploring fast execution construction techniques, safety protocols, and sustainable building systems in active sites.",
-      youtubeUrl: "https://www.youtube.com/watch?v=placeholder2",
+      title: "Construction updates & tech integration in active projects",
+      description: "Exploring fast execution construction techniques, safety protocols, and sustainable building systems.",
+      youtubeUrl: "https://www.youtube.com/watch?v=5qap5aO4i9A",
       duration: "06:30",
       thumbnail: "/images/videos/tech-integration.jpg"
     },
     {
       id: "video-naredco-speaking",
-      title: "NAREDCO Speaking Engagement — The Future of Urban Infrastructure",
-      description: "Keynote address at NAREDCO discussing redevelopment frameworks, public-private partnerships, and transit-oriented urban growth.",
-      youtubeUrl: "https://www.youtube.com/watch?v=placeholder3",
+      title: "NAREDCO Keynote — The Future of Urban Infrastructure",
+      description: "Keynote address on redevelopment frameworks, public-private partnerships, and transit-oriented urban growth.",
+      youtubeUrl: "https://www.youtube.com/watch?v=L_LUpnjgPso",
       duration: "12:40",
       thumbnail: "/images/videos/naredco-keynote.jpg"
     }

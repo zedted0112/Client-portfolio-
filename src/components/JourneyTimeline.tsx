@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { JourneyItem } from './JourneyItem';
 import { JourneyItemData } from '../types';
-import { ChevronLeft, ChevronRight, Calendar, Sparkles, Hand, MoveHorizontal } from 'lucide-react';
+import { Calendar, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface JourneyTimelineProps {
@@ -12,10 +12,6 @@ interface JourneyTimelineProps {
 export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
   const [activeMobileIndex, setActiveMobileIndex] = useState(0);
   const [direction, setDirection] = useState<number>(0);
-
-  // Touch Swipe State
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
 
   const activeItem = items[activeMobileIndex];
 
@@ -29,34 +25,11 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
     setActiveMobileIndex((prev) => (prev < items.length - 1 ? prev + 1 : 0));
   };
 
-  // Hand Touch Swipe Handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchEndX.current = null;
-    touchStartX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    const distance = touchStartX.current - touchEndX.current;
-    const isLeftSwipe = distance > 40;
-    const isRightSwipe = distance < -40;
-
-    if (isLeftSwipe) {
-      handleNext();
-    } else if (isRightSwipe) {
-      handlePrev();
-    }
-  };
-
   // Framer Motion Drag Handler
   const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    if (info.offset.x < -40) {
+    if (info.offset.x < -30 || info.velocity.x < -300) {
       handleNext();
-    } else if (info.offset.x > 40) {
+    } else if (info.offset.x > 30 || info.velocity.x > 300) {
       handlePrev();
     }
   };
@@ -118,25 +91,15 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
             ))}
           </div>
 
-          {/* Swipe Hint Header */}
+          {/* Header Info */}
           <div className="flex items-center justify-between mb-3 text-xs font-mono text-[#c5a880]">
             <span className="font-semibold">
               PHASE {activeMobileIndex + 1} OF {items.length} • {activeItem.year}
             </span>
-            <div className="flex items-center gap-1 text-[11px] text-[#c5a880] bg-[#c5a880]/10 border border-[#c5a880]/30 px-2.5 py-0.5 rounded-full animate-pulse">
-              <Hand className="w-3 h-3 text-[#c5a880]" />
-              <span>Swipe left / right</span>
-              <MoveHorizontal className="w-3 h-3 text-[#c5a880]" />
-            </div>
           </div>
 
           {/* Active Career Phase Card with Touch & Motion Drag */}
-          <div
-            onTouchStart={handleTouchStart}
-            onTouchMove={handleTouchMove}
-            onTouchEnd={handleTouchEnd}
-            className="touch-pan-y cursor-grab active:cursor-grabbing select-none relative bg-[#141822] border border-[#2a3040] rounded-lg p-6 shadow-2xl overflow-hidden"
-          >
+          <div className="cursor-grab active:cursor-grabbing select-none relative bg-[#141822] border border-[#2a3040] rounded-lg p-6 shadow-2xl overflow-hidden">
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#c5a880]/5 rounded-full blur-2xl pointer-events-none" />
             
             <AnimatePresence mode="wait" custom={direction}>
@@ -193,19 +156,9 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
               </motion.div>
             </AnimatePresence>
 
-            {/* Slider Controls */}
-            <div className="flex items-center justify-between pt-6 mt-6 border-t border-[#232835]">
-              <button
-                onClick={handlePrev}
-                aria-label="Previous career phase"
-                className="p-2.5 rounded-full bg-[#1c2230] text-[#c5a880] border border-[#2d364a] hover:bg-[#c5a880] hover:text-[#0a0c0f] transition-all flex items-center gap-1.5 text-xs font-mono cursor-pointer active:scale-95"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Prev</span>
-              </button>
-
-              {/* Dots */}
-              <div className="flex items-center gap-1.5">
+            {/* Pagination Dots Only */}
+            <div className="flex items-center justify-center pt-6 mt-6 border-t border-[#232835]">
+              <div className="flex items-center gap-2">
                 {items.map((_, idx) => (
                   <button
                     key={idx}
@@ -214,21 +167,12 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
                       setActiveMobileIndex(idx);
                     }}
                     aria-label={`Go to phase ${idx + 1}`}
-                    className={`h-2 rounded-full transition-all cursor-pointer ${
-                      activeMobileIndex === idx ? 'w-6 bg-[#c5a880]' : 'w-2 bg-[#2a3040] hover:bg-[#8c92a0]'
+                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                      activeMobileIndex === idx ? 'w-7 bg-[#c5a880]' : 'w-2.5 bg-[#2a3040] hover:bg-[#8c92a0]'
                     }`}
                   />
                 ))}
               </div>
-
-              <button
-                onClick={handleNext}
-                aria-label="Next career phase"
-                className="p-2.5 rounded-full bg-[#1c2230] text-[#c5a880] border border-[#2d364a] hover:bg-[#c5a880] hover:text-[#0a0c0f] transition-all flex items-center gap-1.5 text-xs font-mono cursor-pointer active:scale-95"
-              >
-                <span>Next</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
             </div>
           </div>
         </div>

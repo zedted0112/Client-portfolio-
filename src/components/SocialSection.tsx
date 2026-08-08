@@ -3,7 +3,6 @@ import { SectionHeading } from './SectionHeading';
 import { SocialCard } from './SocialCard';
 import { VideoCard } from './VideoCard';
 import { SocialPostData, VideoItemData } from '../types';
-import { ChevronLeft, ChevronRight, Share2, Youtube } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface SocialSectionProps {
@@ -17,6 +16,39 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
 
   const activePost = posts[activePostIndex];
   const activeVideo = videos[activeVideoIndex];
+
+  const handlePostPrev = () => {
+    setActivePostIndex((prev) => (prev > 0 ? prev - 1 : posts.length - 1));
+  };
+
+  const handlePostNext = () => {
+    setActivePostIndex((prev) => (prev < posts.length - 1 ? prev + 1 : 0));
+  };
+
+  const handleVideoPrev = () => {
+    setActiveVideoIndex((prev) => (prev > 0 ? prev - 1 : videos.length - 1));
+  };
+
+  const handleVideoNext = () => {
+    setActiveVideoIndex((prev) => (prev < videos.length - 1 ? prev + 1 : 0));
+  };
+
+  // Drag handlers for 1 card swipe
+  const handlePostDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    if (info.offset.x < -30 || info.velocity.x < -300) {
+      handlePostNext();
+    } else if (info.offset.x > 30 || info.velocity.x > 300) {
+      handlePostPrev();
+    }
+  };
+
+  const handleVideoDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
+    if (info.offset.x < -30 || info.velocity.x < -300) {
+      handleVideoNext();
+    } else if (info.offset.x > 30 || info.velocity.x > 300) {
+      handleVideoPrev();
+    }
+  };
 
   return (
     <section id="insights" className="py-16 sm:py-28 bg-[#0a0c0f] relative overflow-hidden border-t border-[#1e232e]">
@@ -42,44 +74,40 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
             </span>
           </div>
 
-          {/* MOBILE CAROUSEL FOR LINKEDIN POSTS */}
+          {/* MOBILE CAROUSEL FOR LINKEDIN POSTS WITH 1-CARD DRAG SWIPE */}
           <div className="block md:hidden">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activePost.id}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-              >
-                <SocialCard post={activePost} />
-              </motion.div>
-            </AnimatePresence>
+            <div className="cursor-grab active:cursor-grabbing select-none relative">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activePost.id}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.15}
+                  onDragEnd={handlePostDragEnd}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <SocialCard post={activePost} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-            <div className="flex items-center justify-between pt-4 mt-3 border-t border-[#232835]">
-              <button
-                onClick={() => setActivePostIndex((prev) => (prev > 0 ? prev - 1 : posts.length - 1))}
-                className="p-2 rounded bg-[#161a24] text-[#0077b5] border border-[#232835] text-xs font-mono flex items-center gap-1"
-              >
-                <ChevronLeft className="w-4 h-4" /> Prev
-              </button>
-              <div className="flex items-center gap-1">
+            {/* Pagination Dots Only */}
+            <div className="flex items-center justify-center pt-4 mt-3 border-t border-[#232835]">
+              <div className="flex items-center gap-2">
                 {posts.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setActivePostIndex(i)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      activePostIndex === i ? 'w-5 bg-[#0077b5]' : 'w-1.5 bg-[#2a3040]'
+                    aria-label={`Go to post ${i + 1}`}
+                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                      activePostIndex === i ? 'w-7 bg-[#0077b5]' : 'w-2.5 bg-[#2a3040] hover:bg-[#8c92a0]'
                     }`}
                   />
                 ))}
               </div>
-              <button
-                onClick={() => setActivePostIndex((prev) => (prev < posts.length - 1 ? prev + 1 : 0))}
-                className="p-2 rounded bg-[#161a24] text-[#0077b5] border border-[#232835] text-xs font-mono flex items-center gap-1"
-              >
-                Next <ChevronRight className="w-4 h-4" />
-              </button>
             </div>
           </div>
 
@@ -105,44 +133,40 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
             </span>
           </div>
 
-          {/* MOBILE CAROUSEL FOR VIDEOS */}
+          {/* MOBILE CAROUSEL FOR VIDEOS WITH 1-CARD DRAG SWIPE */}
           <div className="block md:hidden">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={activeVideo.id}
-                initial={{ opacity: 0, scale: 0.98 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.98 }}
-                transition={{ duration: 0.2 }}
-              >
-                <VideoCard video={activeVideo} />
-              </motion.div>
-            </AnimatePresence>
+            <div className="cursor-grab active:cursor-grabbing select-none relative">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={activeVideo.id}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.15}
+                  onDragEnd={handleVideoDragEnd}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -20 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <VideoCard video={activeVideo} />
+                </motion.div>
+              </AnimatePresence>
+            </div>
 
-            <div className="flex items-center justify-between pt-4 mt-3 border-t border-[#232835]">
-              <button
-                onClick={() => setActiveVideoIndex((prev) => (prev > 0 ? prev - 1 : videos.length - 1))}
-                className="p-2 rounded bg-[#161a24] text-[#ff0000] border border-[#232835] text-xs font-mono flex items-center gap-1"
-              >
-                <ChevronLeft className="w-4 h-4" /> Prev
-              </button>
-              <div className="flex items-center gap-1">
+            {/* Pagination Dots Only */}
+            <div className="flex items-center justify-center pt-4 mt-3 border-t border-[#232835]">
+              <div className="flex items-center gap-2">
                 {videos.map((_, i) => (
                   <button
                     key={i}
                     onClick={() => setActiveVideoIndex(i)}
-                    className={`h-1.5 rounded-full transition-all ${
-                      activeVideoIndex === i ? 'w-5 bg-[#ff0000]' : 'w-1.5 bg-[#2a3040]'
+                    aria-label={`Go to video ${i + 1}`}
+                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                      activeVideoIndex === i ? 'w-7 bg-[#ff0000]' : 'w-2.5 bg-[#2a3040] hover:bg-[#8c92a0]'
                     }`}
                   />
                 ))}
               </div>
-              <button
-                onClick={() => setActiveVideoIndex((prev) => (prev < videos.length - 1 ? prev + 1 : 0))}
-                className="p-2 rounded bg-[#161a24] text-[#ff0000] border border-[#232835] text-xs font-mono flex items-center gap-1"
-              >
-                Next <ChevronRight className="w-4 h-4" />
-              </button>
             </div>
           </div>
 
@@ -158,4 +182,5 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
     </section>
   );
 };
+
 

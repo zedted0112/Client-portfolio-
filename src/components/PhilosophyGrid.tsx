@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { PhilosophyCard } from './PhilosophyCard';
 import { PhilosophyItem } from '../types';
-import { ChevronLeft, ChevronRight, Compass, Hand, MoveHorizontal } from 'lucide-react';
+import { Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface PhilosophyGridProps {
@@ -12,10 +12,6 @@ interface PhilosophyGridProps {
 export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) => {
   const [mobileIndex, setMobileIndex] = useState(0);
   const [direction, setDirection] = useState<number>(0);
-
-  // Touch Swipe State
-  const touchStartX = useRef<number | null>(null);
-  const touchEndX = useRef<number | null>(null);
 
   const activeItem = philosophy[mobileIndex];
 
@@ -29,34 +25,11 @@ export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) =>
     setMobileIndex((prev) => (prev < philosophy.length - 1 ? prev + 1 : 0));
   };
 
-  // Hand Touch Swipe Handlers
-  const handleTouchStart = (e: React.TouchEvent) => {
-    touchEndX.current = null;
-    touchStartX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    touchEndX.current = e.targetTouches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStartX.current || !touchEndX.current) return;
-    const distance = touchStartX.current - touchEndX.current;
-    const isLeftSwipe = distance > 40;
-    const isRightSwipe = distance < -40;
-
-    if (isLeftSwipe) {
-      handleNext();
-    } else if (isRightSwipe) {
-      handlePrev();
-    }
-  };
-
-  // Framer Motion Drag Handler
+  // Framer Motion Drag Handler (Single-step advance per swipe)
   const handleDragEnd = (_: any, info: { offset: { x: number }; velocity: { x: number } }) => {
-    if (info.offset.x < -40) {
+    if (info.offset.x < -30 || info.velocity.x < -300) {
       handleNext();
-    } else if (info.offset.x > 40) {
+    } else if (info.offset.x > 30 || info.velocity.x > 300) {
       handlePrev();
     }
   };
@@ -113,27 +86,15 @@ export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) =>
           </div>
 
           <div className="space-y-4">
-            {/* Header info & Hand Touch Hint */}
+            {/* Header info */}
             <div className="flex items-center justify-between text-xs font-mono text-[#c5a880]">
               <span className="flex items-center gap-1.5 font-semibold">
                 <Compass className="w-3.5 h-3.5" /> Principle {mobileIndex + 1} of 8
               </span>
-              
-              {/* Hand Touch Swipe Hint Indicator */}
-              <div className="flex items-center gap-1 text-[11px] text-[#c5a880] bg-[#c5a880]/10 border border-[#c5a880]/30 px-2.5 py-0.5 rounded-full animate-pulse">
-                <Hand className="w-3 h-3 text-[#c5a880]" />
-                <span>Swipe left / right</span>
-                <MoveHorizontal className="w-3 h-3 text-[#c5a880]" />
-              </div>
             </div>
 
             {/* Touch Swipeable Card Wrapper */}
-            <div
-              onTouchStart={handleTouchStart}
-              onTouchMove={handleTouchMove}
-              onTouchEnd={handleTouchEnd}
-              className="touch-pan-y cursor-grab active:cursor-grabbing select-none relative min-h-[320px]"
-            >
+            <div className="cursor-grab active:cursor-grabbing select-none relative min-h-[320px]">
               <AnimatePresence mode="wait" custom={direction}>
                 <motion.div
                   key={activeItem.number}
@@ -154,18 +115,9 @@ export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) =>
               </AnimatePresence>
             </div>
 
-            {/* Slider Controls & Progress Dots */}
-            <div className="flex items-center justify-between pt-4 mt-2 border-t border-[#232835]">
-              <button
-                onClick={handlePrev}
-                aria-label="Previous Principle"
-                className="p-2.5 rounded bg-[#161a24] text-[#c5a880] border border-[#2d364a] hover:border-[#c5a880] text-xs font-mono flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-transform"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span>Prev</span>
-              </button>
-
-              <div className="flex items-center gap-1.5">
+            {/* Pagination Dots Only */}
+            <div className="flex items-center justify-center pt-4 mt-2 border-t border-[#232835]">
+              <div className="flex items-center gap-2">
                 {philosophy.map((_, idx) => (
                   <button
                     key={idx}
@@ -174,21 +126,12 @@ export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) =>
                       setMobileIndex(idx);
                     }}
                     aria-label={`Go to principle ${idx + 1}`}
-                    className={`h-2 rounded-full transition-all cursor-pointer ${
-                      mobileIndex === idx ? 'w-6 bg-[#c5a880]' : 'w-2 bg-[#2c3344] hover:bg-[#8c92a0]'
+                    className={`h-2.5 rounded-full transition-all cursor-pointer ${
+                      mobileIndex === idx ? 'w-7 bg-[#c5a880]' : 'w-2.5 bg-[#2c3344] hover:bg-[#8c92a0]'
                     }`}
                   />
                 ))}
               </div>
-
-              <button
-                onClick={handleNext}
-                aria-label="Next Principle"
-                className="p-2.5 rounded bg-[#161a24] text-[#c5a880] border border-[#2d364a] hover:border-[#c5a880] text-xs font-mono flex items-center gap-1.5 cursor-pointer shadow-sm active:scale-95 transition-transform"
-              >
-                <span>Next</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
             </div>
           </div>
 
