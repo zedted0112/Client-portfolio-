@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
+import { scrollToElement } from '../utils/scroll';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
@@ -44,11 +45,19 @@ export const Button: React.FC<ButtonProps> = ({
 
   if (href) {
     const isExternal = href.startsWith('http');
+    const isHash = href.startsWith('#');
+
     return (
       <a
         href={href}
         target={isExternal ? "_blank" : undefined}
         rel={isExternal ? "noopener noreferrer" : undefined}
+        onClick={(e) => {
+          if (isHash) {
+            e.preventDefault();
+            scrollToElement(href.substring(1));
+          }
+        }}
         className={`${combinedClasses} group`}
       >
         {content}

@@ -1,6 +1,7 @@
 import React from 'react';
 import { siteData } from './data/data';
 import { Navbar } from './components/Navbar';
+import { ScrollProgressBar } from './components/ScrollProgressBar';
 import { Hero } from './components/Hero';
 import { StatStrip } from './components/StatStrip';
 import { AboutSection } from './components/AboutSection';
@@ -20,6 +21,9 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0d0f12] text-[#e8e6e1] font-sans selection:bg-[#c5a880] selection:text-[#0d0f12] pb-12 md:pb-0">
       
+      {/* Scroll Progress Bar */}
+      <ScrollProgressBar />
+
       {/* Top Navbar */}
       <Navbar
         navItems={siteData.navigation}

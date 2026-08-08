@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Menu, X, Building, ArrowUpRight } from 'lucide-react';
 import { NavItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
+import { scrollToElement } from '../utils/scroll';
 
 interface NavbarProps {
   navItems: NavItem[];
@@ -48,7 +49,14 @@ export const Navbar: React.FC<NavbarProps> = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Brand Logo & Title */}
-        <a href="#hero" className="flex items-center gap-3 group">
+        <a
+          href="#hero"
+          onClick={(e) => {
+            e.preventDefault();
+            scrollToElement('hero');
+          }}
+          className="flex items-center gap-3 group"
+        >
           <motion.div
             whileHover={{ scale: 1.05 }}
             className="w-10 h-10 rounded-sm bg-[#1a1e27] border border-[#c5a880]/40 flex items-center justify-center text-[#c5a880] font-serif-title font-bold text-xl group-hover:border-[#c5a880] transition-colors shadow-md"
@@ -74,6 +82,10 @@ export const Navbar: React.FC<NavbarProps> = ({
               <a
                 key={item.href}
                 href={item.href}
+                onClick={(e) => {
+                  e.preventDefault();
+                  scrollToElement(sectionId);
+                }}
                 className={`relative px-3 py-1.5 text-xs font-sans-body tracking-wide transition-colors rounded-xs ${
                   isActive
                     ? 'text-[#c5a880] font-semibold'
@@ -99,6 +111,10 @@ export const Navbar: React.FC<NavbarProps> = ({
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}
             href="#contact"
+            onClick={(e) => {
+              e.preventDefault();
+              scrollToElement('contact');
+            }}
             className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-sm bg-[#c5a880] text-[#0d0f12] hover:bg-[#d6ba92] transition-colors shadow-md shadow-[#c5a880]/10"
           >
             <span>Contact</span>
@@ -134,7 +150,11 @@ export const Navbar: React.FC<NavbarProps> = ({
                   <a
                     key={item.href}
                     href={item.href}
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setMobileMenuOpen(false);
+                      scrollToElement(sectionId);
+                    }}
                     className={`p-3 text-xs rounded-sm border transition-all ${
                       isActive
                         ? 'bg-[#1a1e27] text-[#c5a880] border-[#c5a880]/50 font-semibold'
@@ -150,7 +170,11 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="mt-6 pt-4 border-t border-[#232834] flex flex-col gap-2">
               <a
                 href="#contact"
-                onClick={() => setMobileMenuOpen(false)}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setMobileMenuOpen(false);
+                  scrollToElement('contact');
+                }}
                 className="w-full text-center py-3 text-xs font-semibold rounded-sm bg-[#c5a880] text-[#0d0f12]"
               >
                 Get In Touch Directly

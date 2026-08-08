@@ -1,6 +1,7 @@
 import React from 'react';
 import { NavItem } from '../types';
 import { ArrowUp, Building2, Linkedin, Mail } from 'lucide-react';
+import { scrollToElement } from '../utils/scroll';
 
 interface FooterProps {
   navItems: NavItem[];
@@ -14,7 +15,7 @@ export const Footer: React.FC<FooterProps> = ({
   personalTitle
 }) => {
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    scrollToElement('hero');
   };
 
   return (
@@ -53,6 +54,10 @@ export const Footer: React.FC<FooterProps> = ({
                 <a
                   key={item.href}
                   href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    scrollToElement(item.href.substring(1));
+                  }}
                   className="text-xs font-sans-body text-[#8c92a0] hover:text-[#c5a880] transition-colors py-1"
                 >
                   {item.label}

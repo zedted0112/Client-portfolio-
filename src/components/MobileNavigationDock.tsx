@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, Briefcase, Award, Building2, Compass, Mail, Layers } from 'lucide-react';
+import { scrollToElement } from '../utils/scroll';
 
 export const MobileNavigationDock: React.FC = () => {
   const [activeSection, setActiveSection] = useState<string>('hero');
@@ -15,11 +16,8 @@ export const MobileNavigationDock: React.FC = () => {
   ];
 
   const handleScrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
-      setActiveSection(id);
-    }
+    scrollToElement(id);
+    setActiveSection(id);
   };
 
   useEffect(() => {
