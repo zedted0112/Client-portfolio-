@@ -1,7 +1,7 @@
 import React from 'react';
 import { GalleryItemData } from '../types';
 import { ImagePlaceholder } from './ImagePlaceholder';
-import { X, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface GalleryModalProps {
   item: GalleryItemData | null;

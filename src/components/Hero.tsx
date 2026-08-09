@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowUpRight, Building2, ShieldCheck, Briefcase, Award, Sparkles } from 'lucide-react';
+import { ArrowUpRight, Building2, ShieldCheck, Briefcase, Award } from 'lucide-react';
 import { Button } from './Button';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { motion } from 'motion/react';
@@ -158,7 +158,6 @@ export const Hero: React.FC<HeroProps> = ({
                     <div>
                       <p className="text-sm font-serif-title font-semibold text-[#f3f2ee] flex items-center gap-1.5">
                         Nitesh M. Gangaramani
-                        <Sparkles className="w-3.5 h-3.5 text-[#c5a880]" />
                       </p>
                       <p className="text-[11px] text-[#c5a880] font-sans-body">
                         Managing Director · Nyshaa Realty

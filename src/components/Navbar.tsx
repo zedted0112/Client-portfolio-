@@ -111,17 +111,23 @@ export const Navbar: React.FC<NavbarProps> = ({
         <div className="flex items-center gap-2.5 sm:gap-3">
           {/* Theme Switcher Button */}
           <motion.button
-            whileHover={{ scale: 1.08 }}
-            whileTap={{ scale: 0.92 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
             onClick={toggleTheme}
             aria-label="Toggle theme"
-            title={theme === 'dark' ? 'Switch to Bright Light Mode' : 'Switch to Executive Dark Mode'}
-            className="p-2.5 rounded-sm bg-[#1a1e27] border border-[#232834] text-[#c5a880] hover:text-[#f3f2ee] hover:border-[#c5a880]/60 transition-all duration-200 shadow-sm flex items-center justify-center cursor-pointer group"
+            title={theme === 'dark' ? 'Switch to Classic Ivory Mode' : 'Switch to Executive Obsidian Mode'}
+            className="px-2.5 py-1.5 rounded-sm bg-[#1a1e27] border border-[#232834] text-[#c5a880] hover:text-[#f3f2ee] hover:border-[#c5a880]/60 transition-all duration-200 shadow-sm flex items-center gap-1.5 cursor-pointer group"
           >
             {theme === 'dark' ? (
-              <Sun className="w-4 h-4 text-[#c5a880] group-hover:rotate-45 transition-transform duration-300" />
+              <>
+                <Sun className="w-3.5 h-3.5 text-[#c5a880] group-hover:rotate-45 transition-transform duration-300" />
+                <span className="text-[11px] font-mono tracking-wider hidden md:inline-block">Classic Ivory</span>
+              </>
             ) : (
-              <Moon className="w-4 h-4 text-[#a37c44] group-hover:-rotate-12 transition-transform duration-300" />
+              <>
+                <Moon className="w-3.5 h-3.5 text-[#b45309] group-hover:-rotate-12 transition-transform duration-300" />
+                <span className="text-[11px] font-mono tracking-wider hidden md:inline-block">Obsidian Dark</span>
+              </>
             )}
           </motion.button>
 

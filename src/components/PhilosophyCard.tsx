@@ -8,8 +8,7 @@ import {
   Users,
   CheckCircle2,
   HardHat,
-  Leaf,
-  Sparkles
+  Leaf
 } from 'lucide-react';
 import { motion } from 'motion/react';
 
@@ -28,7 +27,7 @@ export const PhilosophyCard: React.FC<PhilosophyCardProps> = ({ item }) => {
       case 'CheckCircle2': return <CheckCircle2 className="w-6 h-6 text-[#c5a880]" />;
       case 'HardHat': return <HardHat className="w-6 h-6 text-[#c5a880]" />;
       case 'Leaf': return <Leaf className="w-6 h-6 text-[#c5a880]" />;
-      default: return <Sparkles className="w-6 h-6 text-[#c5a880]" />;
+      default: return <ShieldCheck className="w-6 h-6 text-[#c5a880]" />;
     }
   };
 

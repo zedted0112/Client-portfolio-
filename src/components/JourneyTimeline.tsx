@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { JourneyItem } from './JourneyItem';
 import { JourneyItemData } from '../types';
-import { Calendar, Sparkles } from 'lucide-react';
+import { Calendar, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface JourneyTimelineProps {
@@ -142,7 +142,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
                 {/* Highlights List */}
                 <div className="space-y-2 pt-2 border-t border-[#1e2330]">
                   <span className="text-[10px] uppercase font-mono tracking-wider text-[#c5a880] font-semibold flex items-center gap-1">
-                    <Sparkles className="w-3 h-3" /> Strategic Milestones
+                    <TrendingUp className="w-3 h-3" /> Strategic Milestones
                   </span>
                   <ul className="space-y-1.5">
                     {activeItem.highlights.map((h, i) => (

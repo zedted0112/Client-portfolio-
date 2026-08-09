@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Building2, Award, User, Newspaper, Video, Sparkles, Layers, Image as ImageIcon } from 'lucide-react';
+import { Building2, Award, User, Newspaper, Video, Layers, Image as ImageIcon } from 'lucide-react';
 
 interface ImagePlaceholderProps {
   src?: string;
@@ -94,7 +94,7 @@ export const ImagePlaceholder: React.FC<ImagePlaceholderProps> = ({
         )}
 
         <div className="flex items-center gap-1.5 text-[10px] text-[#7a8190] font-mono uppercase tracking-wider pt-1">
-          <Sparkles className="w-3 h-3 text-[#c5a880]/60" />
+          <ImageIcon className="w-3 h-3 text-[#c5a880]/60" />
           <span>Image Placeholder</span>
         </div>
       </div>
