@@ -104,6 +104,7 @@ export interface VideoItemData {
   title: string;
   description: string;
   youtubeUrl?: string;
+  videoUrl?: string;
   embedId?: string;
   duration?: string;
   thumbnail?: string;

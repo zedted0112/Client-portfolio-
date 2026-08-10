@@ -25,8 +25,8 @@ export const SocialCard: React.FC<SocialCardProps> = ({ post }) => {
           title={post.title}
           category={post.platform}
           iconType="news"
-          aspectRatio="aspect-[21/9] sm:aspect-[16/9]"
-          className="transition-transform duration-700 group-hover:scale-105"
+          aspectRatio="aspect-[4/3]"
+          fit="contain"
         />
 
         <div className="p-4 space-y-2">

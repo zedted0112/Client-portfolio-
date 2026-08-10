@@ -28,8 +28,8 @@ export const VentureCard: React.FC<VentureCardProps> = ({ venture }) => {
             title={venture.company}
             category={venture.role}
             iconType="building"
-            aspectRatio="aspect-[16/9]"
-            className="transition-transform duration-700 group-hover:scale-105"
+            aspectRatio="aspect-[4/3]"
+            fit="contain"
           />
           
           <div className="absolute top-4 left-4 bg-[#0d0f12]/80 backdrop-blur-md px-3 py-1 rounded-xs border border-[#c5a880]/30 text-xs font-mono text-[#c5a880] font-semibold">

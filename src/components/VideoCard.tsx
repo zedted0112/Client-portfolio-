@@ -18,21 +18,33 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   };
 
   const embedUrl = getYouTubeEmbedUrl(video.youtubeUrl);
+  const hasLocalVideo = Boolean(video.videoUrl);
 
   return (
     <div className="bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#ff0000]/50 transition-all duration-300 shadow-md hover:shadow-xl overflow-hidden flex flex-col justify-between group h-full">
       <div>
         {/* Video Player or Thumbnail */}
         <div className="relative">
-          {isPlaying && embedUrl ? (
+          {isPlaying && (embedUrl || hasLocalVideo) ? (
             <div className="relative aspect-video w-full bg-black">
-              <iframe
-                src={embedUrl}
-                title={video.title}
-                className="w-full h-full border-0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              />
+              {hasLocalVideo ? (
+                <video
+                  src={video.videoUrl}
+                  title={video.title}
+                  className="w-full h-full border-0"
+                  controls
+                  autoPlay
+                  playsInline
+                />
+              ) : (
+                <iframe
+                  src={embedUrl!}
+                  title={video.title}
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              )}
               <button
                 onClick={() => setIsPlaying(false)}
                 className="absolute top-2 right-2 p-1.5 bg-black/80 text-white rounded-full hover:bg-red-600 transition-colors z-10"
@@ -45,7 +57,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
             <div
               className="relative cursor-pointer group/thumb"
               onClick={() => {
-                if (embedUrl) {
+                if (embedUrl || hasLocalVideo) {
                   setIsPlaying(true);
                 }
               }}
@@ -57,6 +69,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
                 category="YouTube Video"
                 iconType="video"
                 aspectRatio="aspect-video"
+                fit="contain"
               />
 
               {/* Central Play Overlay Button */}
@@ -96,7 +109,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
 
       <div className="px-4 py-2.5 bg-[#101218] border-t border-[#202532] flex items-center justify-between text-[11px] font-mono text-[#8c92a0]">
         <span>Ground Realities</span>
-        <span className="text-[#ff0000] font-medium">{embedUrl ? "Watch Video" : "Preview"}</span>
+        <span className="text-[#ff0000] font-medium">{embedUrl || hasLocalVideo ? "Watch Video" : "Preview"}</span>
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import { SiteData } from '../types';
+import { images, galleryItems } from './images';
 
 export const siteData: SiteData = {
   personal: {
@@ -38,7 +39,7 @@ export const siteData: SiteData = {
       text: "Get in touch",
       href: "#contact"
     },
-    image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=1000"
+    image: images.hero
   },
 
   stats: [
@@ -125,7 +126,7 @@ export const siteData: SiteData = {
         icon: "Heart"
       }
     ],
-    image: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=1000"
+    image: images.about
   },
 
   journey: [
@@ -140,7 +141,7 @@ export const siteData: SiteData = {
         "Direct buyer handovers and site management",
         "Ground-zero exposure to construction realities"
       ],
-      image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1000"
+      image: images.journey.foundation
     },
     {
       id: "j-2005",
@@ -153,7 +154,7 @@ export const siteData: SiteData = {
         "Direct mentorship under Chairman",
         "Cross-functional construction exposure"
       ],
-      image: "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=80&w=1000"
+      image: images.journey.uaeTraining
     },
     {
       id: "j-2006",
@@ -166,7 +167,7 @@ export const siteData: SiteData = {
         "Top-5 developer status in Dubai within 3 years",
         "Led 2008 crisis consolidation: 75% liability reduction"
       ],
-      image: "https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&q=80&w=1000"
+      image: images.journey.dubaiScaling
     },
     {
       id: "j-2011",
@@ -179,7 +180,7 @@ export const siteData: SiteData = {
         "Managed 1,200+ team members across nationwide sites",
         "Delivered 52 major infrastructure & building projects"
       ],
-      image: "https://images.unsplash.com/photo-1590496793929-36417d3117de?auto=format&fit=crop&q=80&w=1000"
+      image: images.journey.indiaEmpire
     },
     {
       id: "j-2021",
@@ -192,7 +193,7 @@ export const siteData: SiteData = {
         "Technology-enabled modern student living ecosystems",
         "Expansion into premium co-working spaces"
       ],
-      image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&q=80&w=1000"
+      image: images.journey.sukoonStays
     },
     {
       id: "j-present",
@@ -205,7 +206,7 @@ export const siteData: SiteData = {
         "Commercial IT parks and mixed-use destinations",
         "Fast-execution construction techniques"
       ],
-      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1000"
+      image: images.journey.nyshaaPresent
     }
   ],
 
@@ -218,7 +219,7 @@ export const siteData: SiteData = {
       vision: "Our goal extends beyond construction; we aim to create destinations that generate long-term value for investors and communities alike.",
       websiteUrl: "https://nyshaarealty.com",
       tags: ["Urban Redevelopment", "Commercial Real Estate", "Mixed-Use", "Fast Execution"],
-      image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&q=80&w=1200"
+      image: images.ventures.nyshaa
     },
     {
       id: "sukoon-stays",
@@ -228,7 +229,7 @@ export const siteData: SiteData = {
       vision: "To provide safe, technology-enabled living and workspace solutions that foster innovation, personal growth, and professional success.",
       websiteUrl: "https://sukoonstays.com",
       tags: ["Student Housing", "Luxury Co-Living", "Co-Working Hubs", "Tech-Enabled Living"],
-      image: "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80&w=1200"
+      image: images.ventures.sukoon
     }
   ],
 
@@ -245,7 +246,7 @@ export const siteData: SiteData = {
         "Inaugurated by Hon'ble PM Shri Narendra Modi",
         "Major land leveling, stormwater drains & arterial road network"
       ],
-      image: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&q=80&w=1200"
+      image: images.projects.jnpt
     },
     {
       id: "pune-metro",
@@ -259,7 +260,7 @@ export const siteData: SiteData = {
         "Precast and heavy structural engineering",
         "Crucial urban transit infrastructure for Pune city"
       ],
-      image: "https://images.unsplash.com/photo-1515165562839-978bbcf18277?auto=format&fit=crop&q=80&w=1200"
+      image: images.projects.puneMetro
     },
     {
       id: "gujarat-bhavan",
@@ -273,7 +274,7 @@ export const siteData: SiteData = {
         "Inaugurated by the Prime Minister of India",
         "Premium architectural finish and heritage alignment"
       ],
-      image: "https://images.unsplash.com/photo-1577495508048-b635879837f1?auto=format&fit=crop&q=80&w=1200"
+      image: images.projects.gujaratBhavan
     },
     {
       id: "le-grand-chateau",
@@ -287,7 +288,7 @@ export const siteData: SiteData = {
         "Delivered a full 12 months ahead of scheduled commitment",
         "Won CNBC Award for Best Property of the Year"
       ],
-      image: "https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&q=80&w=1200"
+      image: images.projects.leGrandChateau
     },
     {
       id: "signature-square",
@@ -301,7 +302,7 @@ export const siteData: SiteData = {
         "Modern architectural design with premium amenities",
         "Prime location redevelopment in Mumbai"
       ],
-      image: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?auto=format&fit=crop&q=80&w=1200"
+      image: images.projects.signatureSquare
     }
   ],
 
@@ -363,7 +364,7 @@ export const siteData: SiteData = {
       organization: "CNBC International Property Awards",
       year: "Dubai",
       description: "Awarded for Le Grand Chateau development in Jumeirah Village South, Dubai.",
-      image: "https://images.unsplash.com/photo-1531545514256-b1400bc00f31?auto=format&fit=crop&q=80&w=1000"
+      image: images.awards.cnbc
     },
     {
       id: "award-young-entrepreneur",
@@ -371,7 +372,7 @@ export const siteData: SiteData = {
       organization: "Estate Awards",
       year: "2012",
       description: "Conferred in recognition of rapid business scaling and real estate development leadership.",
-      image: "https://images.unsplash.com/photo-1567427017947-545c5f8d16ad?auto=format&fit=crop&q=80&w=1000"
+      image: images.awards.youngEntrepreneur
     },
     {
       id: "award-best-executive",
@@ -379,7 +380,7 @@ export const siteData: SiteData = {
       organization: "Estate Awards",
       year: "2013",
       description: "Honored for outstanding operational management and execution of mega contracts.",
-      image: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=1000"
+      image: images.awards.bestExecutive
     },
     {
       id: "award-indian-leadership",
@@ -387,7 +388,7 @@ export const siteData: SiteData = {
       organization: "All India Achiever's Foundation (AIAF)",
       year: "Conferred",
       description: "Presented for significant contributions to national infrastructure and industrial scaling.",
-      image: "https://images.unsplash.com/photo-1578574577315-3fbeb0cecdc2?auto=format&fit=crop&q=80&w=1000"
+      image: images.awards.indianLeadership
     },
     {
       id: "award-tata-housing",
@@ -395,7 +396,7 @@ export const siteData: SiteData = {
       organization: "Tata Housing",
       year: "2013",
       description: "Awarded by Tata Housing for exceptional delivery of the La Montana project.",
-      image: "https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&q=80&w=1000"
+      image: images.awards.tataHousing
     },
     {
       id: "award-facade",
@@ -403,7 +404,7 @@ export const siteData: SiteData = {
       organization: "Construction Week India Awards",
       year: "2014, 2015, 2016",
       description: "Recognized three consecutive years for excellence in structural glazing and building envelope engineering.",
-      image: "https://images.unsplash.com/photo-1508873696983-2df515122519?auto=format&fit=crop&q=80&w=1000"
+      image: images.awards.facadeContractor
     }
   ],
 
@@ -415,7 +416,7 @@ export const siteData: SiteData = {
       date: "2025",
       description: "Honored as Young Entrepreneur of the Year for contributions to urban redevelopment and sustainable infrastructure.",
       category: "Conclave Honor",
-      image: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=1000"
+      image: images.media.navabharat
     },
     {
       id: "media-bw-future-design",
@@ -424,7 +425,7 @@ export const siteData: SiteData = {
       date: "Design Summit",
       description: "Associate Partner, Nyshaa Realty — Discussing modern architectural design, space optimization, and luxury urban aesthetics.",
       category: "Feature Article",
-      image: "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&q=80&w=1000"
+      image: images.media.businessworld
     },
     {
       id: "media-tribune-ani",
@@ -433,7 +434,7 @@ export const siteData: SiteData = {
       date: "Vision Special",
       description: "Detailing our roadmap toward data-centre parks, green-certified commercial developments, and sustainable urban renewal across Mumbai.",
       category: "National Press",
-      image: "https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=1000"
+      image: images.media.tribune
     },
     {
       id: "media-plast-wall",
@@ -442,7 +443,7 @@ export const siteData: SiteData = {
       date: "Tech Insight",
       description: "Covering our shift towards affordable housing technologies, including the Plast Wall Building System for accelerated structural delivery.",
       category: "Tech Interview",
-      image: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1000"
+      image: images.media.constructionTech
     }
   ],
 
@@ -455,7 +456,7 @@ export const siteData: SiteData = {
       url: "https://www.linkedin.com/in/niteshgangaramani",
       date: "Recent Insight",
       tags: ["Redevelopment", "Mumbai Real Estate", "Urban Planning"],
-      image: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1000"
+      image: images.social.redevelopment
     },
     {
       id: "post-2008-crisis",
@@ -465,7 +466,7 @@ export const siteData: SiteData = {
       url: "https://www.linkedin.com/in/niteshgangaramani",
       date: "Leadership Series",
       tags: ["Crisis Leadership", "Risk Mitigation", "Real Estate"],
-      image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&q=80&w=1000"
+      image: images.social.crisisLeadership
     }
   ],
 
@@ -474,17 +475,17 @@ export const siteData: SiteData = {
       id: "video-signature-square",
       title: "Behind-the-scenes site visit at Signature Square",
       description: "Exclusive walkthrough showcasing structural milestones, architectural elevation details, and quality controls.",
-      youtubeUrl: "https://www.youtube.com/watch?v=M5QY2_8704o",
+      videoUrl: "/videos/site-visit-signature-square.mp4",
       duration: "04:15",
-      thumbnail: "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=1000"
+      thumbnail: images.videos.signatureSquare
     },
     {
       id: "video-construction-tech",
       title: "Construction updates & tech integration in active projects",
       description: "Exploring fast execution construction techniques, safety protocols, and sustainable building systems.",
-      youtubeUrl: "https://www.youtube.com/watch?v=5qap5aO4i9A",
+      videoUrl: "/videos/construction-updates.mp4",
       duration: "06:30",
-      thumbnail: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?auto=format&fit=crop&q=80&w=1000"
+      thumbnail: images.videos.constructionTech
     },
     {
       id: "video-naredco-speaking",
@@ -492,47 +493,11 @@ export const siteData: SiteData = {
       description: "Keynote address on redevelopment frameworks, public-private partnerships, and transit-oriented urban growth.",
       youtubeUrl: "https://www.youtube.com/watch?v=L_LUpnjgPso",
       duration: "12:40",
-      thumbnail: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&q=80&w=1000"
+      thumbnail: images.videos.naredcoKeynote
     }
   ],
 
-  gallery: [
-    {
-      id: "gal-1",
-      src: "https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&q=80&w=1000",
-      caption: "Receiving the NDTV Award for execution excellence.",
-      category: "Awards & Recognition",
-      aspectRatio: "aspect-[4/3]"
-    },
-    {
-      id: "gal-2",
-      src: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?auto=format&fit=crop&q=80&w=1000",
-      caption: "On-site construction crane silhouette against the Mumbai skyline.",
-      category: "Site Execution",
-      aspectRatio: "aspect-[16/9]"
-    },
-    {
-      id: "gal-3",
-      src: "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&q=80&w=1000",
-      caption: "Signature Square architectural renders and façade engineering details.",
-      category: "Architectural Renders",
-      aspectRatio: "aspect-[4/3]"
-    },
-    {
-      id: "gal-4",
-      src: "https://images.unsplash.com/photo-1531545514256-b1400bc00f31?auto=format&fit=crop&q=80&w=1000",
-      caption: "Award photographs from the Estate Awards and CNBC events.",
-      category: "Ceremonies",
-      aspectRatio: "aspect-[3/2]"
-    },
-    {
-      id: "gal-5",
-      src: "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&q=80&w=1000",
-      caption: "Speaking engagements alongside industry leaders and policy makers.",
-      category: "Keynotes & Industry",
-      aspectRatio: "aspect-[16/9]"
-    }
-  ],
+  gallery: galleryItems,
 
   contact: {
     sectionHeading: "Let's Build Something That Lasts",

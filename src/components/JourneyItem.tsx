@@ -92,8 +92,9 @@ export const JourneyItem: React.FC<JourneyItemProps> = ({ item, isEven }) => {
               title={`${item.year} | ${item.title}`}
               category={item.location}
               iconType="building"
-              aspectRatio="aspect-[16/10]"
-              className="rounded-xs transition-transform duration-700 group-hover:scale-105"
+              aspectRatio="aspect-[4/3]"
+              fit="contain"
+              className="rounded-xs"
             />
           </div>
         </motion.div>

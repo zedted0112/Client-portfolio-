@@ -25,8 +25,8 @@ export const MediaCard: React.FC<MediaCardProps> = ({ article }) => {
           title={article.title}
           category={article.publication}
           iconType="news"
-          aspectRatio="aspect-[16/9]"
-          className="transition-transform duration-700 group-hover:scale-105"
+          aspectRatio="aspect-[4/3]"
+          fit="contain"
         />
 
         <div className="p-6 space-y-3">

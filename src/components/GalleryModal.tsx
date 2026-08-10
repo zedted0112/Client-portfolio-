@@ -63,6 +63,7 @@ export const GalleryModal: React.FC<GalleryModalProps> = ({
             category={item.category}
             iconType="gallery"
             aspectRatio="aspect-[16/10]"
+            fit="contain"
           />
         </div>
 

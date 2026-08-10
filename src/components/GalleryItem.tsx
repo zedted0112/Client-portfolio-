@@ -26,8 +26,8 @@ export const GalleryItem: React.FC<GalleryItemProps> = ({ item, onClick }) => {
         title={item.caption}
         category={item.category}
         iconType="gallery"
-        aspectRatio={item.aspectRatio || "aspect-[4/3]"}
-        className="transition-transform duration-700 group-hover:scale-105"
+        aspectRatio="aspect-[4/3]"
+        fit="contain"
       />
 
       {/* Hover Overlay */}

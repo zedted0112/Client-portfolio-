@@ -1,15 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { Menu, X, Building, ArrowUpRight, Sun, Moon } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Menu, X, ArrowUpRight, ChevronDown } from 'lucide-react';
 import { NavItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { scrollToElement } from '../utils/scroll';
-import { useTheme } from '../context/ThemeContext';
 
 interface NavbarProps {
   navItems: NavItem[];
   personalName: string;
   personalTitle: string;
 }
+
+const SHORT_LABELS: Record<string, string> = {
+  '#portfolio': 'Work',
+  '#media': 'Media',
+  '#insights': 'Insights',
+  '#achievements': 'Honors',
+};
+
+const PRIMARY_SECTIONS = new Set(['hero', 'about', 'journey', 'ventures', 'portfolio', 'philosophy']);
+
+const getSectionId = (href: string) => href.substring(1);
+const getNavLabel = (item: NavItem, compact = false) =>
+  compact && SHORT_LABELS[item.href] ? SHORT_LABELS[item.href] : item.label;
 
 export const Navbar: React.FC<NavbarProps> = ({
   navItems,
@@ -18,8 +30,77 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
-  const { theme, toggleTheme } = useTheme();
+  const moreMenuRef = useRef<HTMLDivElement>(null);
+
+  const navLinks = navItems.filter((item) => getSectionId(item.href) !== 'contact');
+  const primaryLinks = navLinks.filter((item) => PRIMARY_SECTIONS.has(getSectionId(item.href)));
+  const secondaryLinks = navLinks.filter((item) => !PRIMARY_SECTIONS.has(getSectionId(item.href)));
+  const isSecondaryActive = secondaryLinks.some(
+    (item) => activeSection === getSectionId(item.href)
+  );
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (moreMenuRef.current && !moreMenuRef.current.contains(event.target as Node)) {
+        setMoreMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleNavClick = (sectionId: string, closeMenus = false) => {
+    if (closeMenus) {
+      setMobileMenuOpen(false);
+      setMoreMenuOpen(false);
+    }
+    scrollToElement(sectionId);
+  };
+
+  const renderNavLink = (
+    item: NavItem,
+    compact = false,
+    variant: 'inline' | 'dropdown' = 'inline'
+  ) => {
+    const sectionId = getSectionId(item.href);
+    const isActive = activeSection === sectionId;
+
+    const inlineClasses = `relative px-2.5 xl:px-3 py-1.5 text-[11px] xl:text-xs font-sans-body tracking-wide transition-colors rounded-xs whitespace-nowrap ${
+      isActive
+        ? 'text-[#c5a880] font-semibold'
+        : 'text-[#9fa4b0] hover:text-[#f3f2ee] hover:bg-[#161a22]'
+    }`;
+
+    const dropdownClasses = `block px-3.5 py-2.5 text-xs font-sans-body tracking-wide transition-colors rounded-sm whitespace-nowrap ${
+      isActive
+        ? 'bg-[#1a1e27] text-[#c5a880] font-semibold'
+        : 'text-[#9fa4b0] hover:text-[#f3f2ee] hover:bg-[#161a22]'
+    }`;
+
+    return (
+      <a
+        key={item.href}
+        href={item.href}
+        onClick={(e) => {
+          e.preventDefault();
+          handleNavClick(sectionId, variant === 'dropdown');
+        }}
+        className={variant === 'dropdown' ? dropdownClasses : inlineClasses}
+      >
+        {getNavLabel(item, compact)}
+        {variant === 'inline' && isActive && (
+          <motion.div
+            layoutId="activeNavIndicator"
+            className="absolute bottom-0 left-2.5 right-2.5 h-[2px] bg-[#c5a880] rounded-full"
+            transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+          />
+        )}
+      </a>
+    );
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -49,7 +130,7 @@ export const Navbar: React.FC<NavbarProps> = ({
           : 'bg-gradient-to-b from-[#0d0f12]/90 via-[#0d0f12]/50 to-transparent py-5'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-4">
         {/* Brand Logo & Title */}
         <a
           href="#hero"
@@ -57,80 +138,75 @@ export const Navbar: React.FC<NavbarProps> = ({
             e.preventDefault();
             scrollToElement('hero');
           }}
-          className="flex items-center gap-3 group"
+          className="flex items-center gap-3 group shrink-0 min-w-0"
         >
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="w-10 h-10 rounded-sm bg-[#1a1e27] border border-[#c5a880]/40 flex items-center justify-center text-[#c5a880] font-serif-title font-bold text-xl group-hover:border-[#c5a880] transition-colors shadow-md"
+            className="w-10 h-10 rounded-sm bg-[#1a1e27] border border-[#c5a880]/40 flex items-center justify-center text-[#c5a880] font-serif-title font-bold text-xl group-hover:border-[#c5a880] transition-colors shadow-md shrink-0"
           >
             NG
           </motion.div>
-          <div className="flex flex-col">
-            <span className="font-serif-title font-semibold text-base sm:text-lg text-[#f3f2ee] tracking-tight group-hover:text-[#c5a880] transition-colors">
+          <div className="flex flex-col min-w-0">
+            <span className="font-serif-title font-semibold text-base sm:text-lg text-[#f3f2ee] tracking-tight group-hover:text-[#c5a880] transition-colors truncate">
               {personalName}
             </span>
-            <span className="text-[10px] text-[#9fa4b0] font-mono tracking-wider uppercase hidden sm:inline-block">
+            <span className="text-[10px] text-[#9fa4b0] font-mono tracking-wider uppercase hidden xl:inline-block truncate">
               Nyshaa Realty & Sukoon Stays
             </span>
           </div>
         </a>
 
         {/* Desktop Navigation */}
-        <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
-          {navItems.map((item) => {
-            const sectionId = item.href.substring(1);
-            const isActive = activeSection === sectionId;
-            return (
-              <a
-                key={item.href}
-                href={item.href}
-                onClick={(e) => {
-                  e.preventDefault();
-                  scrollToElement(sectionId);
-                }}
-                className={`relative px-3 py-1.5 text-xs font-sans-body tracking-wide transition-colors rounded-xs ${
-                  isActive
-                    ? 'text-[#c5a880] font-semibold'
-                    : 'text-[#9fa4b0] hover:text-[#f3f2ee] hover:bg-[#161a22]'
-                }`}
-              >
-                {item.label}
-                {isActive && (
-                  <motion.div
-                    layoutId="activeNavIndicator"
-                    className="absolute bottom-0 left-0 right-0 h-[2px] bg-[#c5a880] rounded-full"
-                    transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+        <nav className="hidden lg:flex flex-1 items-center justify-center min-w-0">
+          <div className="flex items-center gap-0.5 xl:gap-1">
+            {primaryLinks.map((item) => renderNavLink(item, true))}
+
+            {/* Compact "More" menu for laptop screens */}
+            {secondaryLinks.length > 0 && (
+              <div ref={moreMenuRef} className="relative 2xl:hidden">
+                <button
+                  onClick={() => setMoreMenuOpen((open) => !open)}
+                  aria-expanded={moreMenuOpen}
+                  aria-haspopup="true"
+                  className={`flex items-center gap-1 px-2.5 py-1.5 text-[11px] xl:text-xs font-sans-body tracking-wide transition-colors rounded-xs whitespace-nowrap ${
+                    isSecondaryActive || moreMenuOpen
+                      ? 'text-[#c5a880] font-semibold bg-[#161a22]'
+                      : 'text-[#9fa4b0] hover:text-[#f3f2ee] hover:bg-[#161a22]'
+                  }`}
+                >
+                  More
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      moreMenuOpen ? 'rotate-180' : ''
+                    }`}
                   />
-                )}
-              </a>
-            );
-          })}
+                </button>
+
+                <AnimatePresence>
+                  {moreMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 8, scale: 0.98 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 8, scale: 0.98 }}
+                      transition={{ duration: 0.18 }}
+                      className="absolute top-full left-1/2 -translate-x-1/2 mt-2 min-w-[200px] rounded-sm border border-[#232834] bg-[#0e1116]/95 backdrop-blur-xl shadow-2xl shadow-black/50 p-1.5 z-50"
+                    >
+                      {secondaryLinks.map((item) => renderNavLink(item, true, 'dropdown'))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            )}
+
+            {/* Full secondary links on very wide screens */}
+            <div className="hidden 2xl:flex items-center gap-0.5">
+              {secondaryLinks.map((item) => renderNavLink(item, true))}
+            </div>
+          </div>
         </nav>
 
-        {/* Header Action Button, Theme Toggle & Mobile Toggle */}
-        <div className="flex items-center gap-2.5 sm:gap-3">
-          {/* Theme Switcher Button */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={toggleTheme}
-            aria-label="Toggle theme"
-            title={theme === 'dark' ? 'Switch to Classic Ivory Mode' : 'Switch to Executive Obsidian Mode'}
-            className="px-2.5 py-1.5 rounded-sm bg-[#1a1e27] border border-[#232834] text-[#c5a880] hover:text-[#f3f2ee] hover:border-[#c5a880]/60 transition-all duration-200 shadow-sm flex items-center gap-1.5 cursor-pointer group"
-          >
-            {theme === 'dark' ? (
-              <>
-                <Sun className="w-3.5 h-3.5 text-[#c5a880] group-hover:rotate-45 transition-transform duration-300" />
-                <span className="text-[11px] font-mono tracking-wider hidden md:inline-block">Classic Ivory</span>
-              </>
-            ) : (
-              <>
-                <Moon className="w-3.5 h-3.5 text-[#b45309] group-hover:-rotate-12 transition-transform duration-300" />
-                <span className="text-[11px] font-mono tracking-wider hidden md:inline-block">Obsidian Dark</span>
-              </>
-            )}
-          </motion.button>
-
+        {/* Header actions & mobile toggle — theme switcher hidden for now */}
+        <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 ml-auto lg:ml-0">
           <motion.a
             whileHover={{ scale: 1.03 }}
             whileTap={{ scale: 0.97 }}

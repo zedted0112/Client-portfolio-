@@ -125,9 +125,9 @@ export const Hero: React.FC<HeroProps> = ({
 
           </div>
 
-          {/* Right Hero Image Frame with Parallax & Motion */}
+          {/* Right Hero Portrait — cropped to person + building */}
           <motion.div variants={itemVariants} className="lg:col-span-5 relative">
-            <div className="relative mx-auto max-w-md lg:max-w-none">
+            <div className="relative mx-auto w-full max-w-lg lg:max-w-none">
               
               {/* Outer Architectural Border Accent */}
               <div className="absolute -inset-2 rounded-sm bg-gradient-to-tr from-[#c5a880]/40 via-transparent to-[#282f3d]/60 blur-xs" />
@@ -135,7 +135,7 @@ export const Hero: React.FC<HeroProps> = ({
               <motion.div
                 whileHover={{ scale: 1.01 }}
                 transition={{ duration: 0.3 }}
-                className="relative bg-[#14171f] p-3 sm:p-4 rounded-sm border border-[#2a303f] shadow-2xl overflow-hidden group"
+                className="relative bg-[#14171f] p-2 sm:p-2.5 rounded-sm border border-[#2a303f] shadow-2xl overflow-hidden group"
               >
                 <ImagePlaceholder
                   src={image}
@@ -143,8 +143,10 @@ export const Hero: React.FC<HeroProps> = ({
                   title="Nitesh M. Gangaramani"
                   category="Managing Director & Founder"
                   iconType="user"
-                  aspectRatio="aspect-[4/5]"
-                  className="rounded-xs transition-transform duration-700 group-hover:scale-105"
+                  aspectRatio="aspect-[3/4]"
+                  fit="cover"
+                  objectPosition="center top"
+                  className="rounded-xs"
                 />
 
                 {/* Floating Executive Tag */}
@@ -152,7 +154,7 @@ export const Hero: React.FC<HeroProps> = ({
                   initial={{ y: 20, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.6, duration: 0.6 }}
-                  className="absolute bottom-6 left-6 right-6 p-4 bg-[#0d0f12]/90 backdrop-blur-md border border-[#c5a880]/40 rounded-sm shadow-xl"
+                  className="absolute bottom-5 left-5 right-5 p-4 bg-[#0d0f12]/90 backdrop-blur-md border border-[#c5a880]/40 rounded-sm shadow-xl"
                 >
                   <div className="flex items-center justify-between">
                     <div>

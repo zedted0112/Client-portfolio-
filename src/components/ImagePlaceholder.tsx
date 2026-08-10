@@ -8,6 +8,8 @@ interface ImagePlaceholderProps {
   title?: string;
   iconType?: 'building' | 'award' | 'user' | 'news' | 'video' | 'gallery' | 'default';
   aspectRatio?: string;
+  fit?: 'cover' | 'contain';
+  objectPosition?: string;
   className?: string;
   onClick?: () => void;
 }
@@ -19,6 +21,8 @@ export const ImagePlaceholder: React.FC<ImagePlaceholderProps> = ({
   title,
   iconType = 'default',
   aspectRatio = "aspect-video",
+  fit = 'cover',
+  objectPosition = 'center',
   className = "",
   onClick
 }) => {
@@ -47,16 +51,27 @@ export const ImagePlaceholder: React.FC<ImagePlaceholderProps> = ({
   const hasValidSrc = src && src.trim() !== '' && !imageError;
 
   if (hasValidSrc) {
+    const fitClass = fit === 'contain' ? 'object-contain' : 'object-cover';
+    const hoverScaleClass = fit === 'contain' ? '' : 'group-hover:scale-105';
+
     return (
-      <div className={`relative overflow-hidden ${aspectRatio} ${className} group`}>
+      <div
+        className={`relative overflow-hidden ${aspectRatio} ${fit === 'contain' ? 'bg-[#10131a]' : ''} ${className} group`}
+        onClick={onClick}
+      >
         <img
           src={src}
           alt={alt}
           onError={() => setImageError(true)}
-          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+          className={`w-full h-full ${fitClass} transition-transform duration-700 ease-out ${hoverScaleClass}`}
+          style={{ objectPosition }}
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f12]/80 via-transparent to-transparent opacity-60 pointer-events-none" />
+        <div
+          className={`absolute inset-0 bg-gradient-to-t from-[#0d0f12]/80 via-transparent to-transparent pointer-events-none ${
+            fit === 'contain' ? 'opacity-30' : 'opacity-60'
+          }`}
+        />
       </div>
     );
   }

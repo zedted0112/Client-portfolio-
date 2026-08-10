@@ -27,8 +27,8 @@ export const ProjectCard: React.FC<ProjectCardProps> = ({ project }) => {
             title={project.title}
             category={project.category}
             iconType="building"
-            aspectRatio="aspect-[16/10]"
-            className="transition-transform duration-700 group-hover:scale-105"
+            aspectRatio="aspect-[4/3]"
+            fit="contain"
           />
 
           {/* Value Badge */}

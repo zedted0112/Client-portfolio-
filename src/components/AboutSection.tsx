@@ -41,6 +41,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ about }) => {
                   category="Managing Director"
                   iconType="user"
                   aspectRatio="aspect-[4/5]"
+                  fit="cover"
+                  objectPosition="top"
                   className="rounded-xs"
                 />
               </div>

@@ -25,8 +25,8 @@ export const AwardCard: React.FC<AwardCardProps> = ({ award }) => {
           title={award.title}
           category={award.organization}
           iconType="award"
-          aspectRatio="aspect-[16/10]"
-          className="transition-transform duration-700 group-hover:scale-105"
+          aspectRatio="aspect-[4/3]"
+          fit="contain"
         />
 
         <div className="p-6 space-y-3">
