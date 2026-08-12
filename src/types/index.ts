@@ -119,6 +119,7 @@ export interface GalleryItemData {
 }
 
 export interface ContactData {
+  eyebrow?: string;
   sectionHeading: string;
   subheading: string;
   email: string;
@@ -128,7 +129,38 @@ export interface ContactData {
   googleMapsUrl?: string;
 }
 
+export type SectionId =
+  | 'hero'
+  | 'stats'
+  | 'about'
+  | 'journey'
+  | 'ventures'
+  | 'portfolio'
+  | 'philosophy'
+  | 'achievements'
+  | 'media'
+  | 'insights'
+  | 'gallery'
+  | 'contact';
+
+export interface SectionHeadingOverride {
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+}
+
+export interface SiteSettings {
+  accentColor: string;
+  backgroundColor: string;
+  surfaceColor: string;
+  textColor: string;
+  hiddenSections: SectionId[];
+  sectionOrder: SectionId[];
+  headings: Partial<Record<SectionId, SectionHeadingOverride>>;
+}
+
 export interface SiteData {
+  settings?: SiteSettings;
   personal: {
     name: string;
     title: string;

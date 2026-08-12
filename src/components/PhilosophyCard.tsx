@@ -11,12 +11,14 @@ import {
   Leaf
 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { EditableText } from '../admin/Editable';
 
 interface PhilosophyCardProps {
   item: PhilosophyItem;
+  basePath: string;
 }
 
-export const PhilosophyCard: React.FC<PhilosophyCardProps> = ({ item }) => {
+export const PhilosophyCard: React.FC<PhilosophyCardProps> = ({ item, basePath }) => {
   const getIcon = (iconName?: string) => {
     switch (iconName) {
       case 'ShieldCheck': return <ShieldCheck className="w-6 h-6 text-[#c5a880]" />;
@@ -43,24 +45,21 @@ export const PhilosophyCard: React.FC<PhilosophyCardProps> = ({ item }) => {
       <div className="absolute top-0 right-0 w-24 h-24 bg-[#c5a880]/5 rounded-bl-full pointer-events-none group-hover:bg-[#c5a880]/10 transition-colors" />
 
       <div>
-        {/* Top Header */}
         <div className="flex items-center justify-between mb-6 relative z-10">
           <div className="p-3 bg-[#1c212c] rounded-sm border border-[#c5a880]/30 group-hover:border-[#c5a880] transition-colors shadow-inner">
             {getIcon(item.iconName)}
           </div>
-          <span className="text-2xl font-serif-title font-bold text-[#c5a880]/40 font-mono">
+          <EditableText path={`${basePath}.number`} className="text-2xl font-serif-title font-bold text-[#c5a880]/40 font-mono">
             0{item.number}
-          </span>
+          </EditableText>
         </div>
 
-        {/* Title */}
         <h3 className="text-xl font-serif-title font-semibold text-[#f3f2ee] group-hover:text-[#c5a880] transition-colors mb-3">
-          {item.title}
+          <EditableText path={`${basePath}.title`}>{item.title}</EditableText>
         </h3>
 
-        {/* Description */}
         <p className="text-xs sm:text-sm text-[#a2a8b8] font-sans-body font-light leading-relaxed">
-          {item.description}
+          <EditableText path={`${basePath}.description`} as="span">{item.description}</EditableText>
         </p>
       </div>
 
@@ -71,4 +70,3 @@ export const PhilosophyCard: React.FC<PhilosophyCardProps> = ({ item }) => {
     </motion.div>
   );
 };
-

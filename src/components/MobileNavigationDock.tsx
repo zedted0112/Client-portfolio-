@@ -2,7 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { User, Briefcase, Award, Building2, Compass, Mail, Layers } from 'lucide-react';
 import { scrollToElement } from '../utils/scroll';
 
+import { useAdminOptional } from '../admin/AdminContext';
+
 export const MobileNavigationDock: React.FC = () => {
+  const admin = useAdminOptional();
+  if (admin?.editMode) return null;
   const [activeSection, setActiveSection] = useState<string>('hero');
 
   const dockItems = [

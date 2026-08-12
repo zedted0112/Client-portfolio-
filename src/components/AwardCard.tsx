@@ -1,14 +1,16 @@
 import React from 'react';
 import { AwardData } from '../types';
 import { ImagePlaceholder } from './ImagePlaceholder';
-import { Award, Calendar, Building2 } from 'lucide-react';
+import { Award } from 'lucide-react';
 import { motion } from 'motion/react';
+import { EditableText } from '../admin/Editable';
 
 interface AwardCardProps {
   award: AwardData;
+  basePath: string;
 }
 
-export const AwardCard: React.FC<AwardCardProps> = ({ award }) => {
+export const AwardCard: React.FC<AwardCardProps> = ({ award, basePath }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -27,24 +29,29 @@ export const AwardCard: React.FC<AwardCardProps> = ({ award }) => {
           iconType="award"
           aspectRatio="aspect-[4/3]"
           fit="contain"
+          editPaths={{
+            src: `${basePath}.image`,
+            title: `${basePath}.title`,
+            category: `${basePath}.organization`,
+          }}
         />
 
         <div className="p-6 space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-mono text-[#c5a880] uppercase tracking-wider">
-              {award.organization}
+              <EditableText path={`${basePath}.organization`}>{award.organization}</EditableText>
             </span>
             <span className="text-xs font-mono px-2 py-0.5 bg-[#1e232e] text-[#8c92a0] border border-[#2c3344] rounded-xs font-semibold">
-              {award.year}
+              <EditableText path={`${basePath}.year`}>{award.year}</EditableText>
             </span>
           </div>
 
           <h3 className="text-xl font-serif-title font-semibold text-[#f3f2ee] group-hover:text-[#c5a880] transition-colors leading-snug">
-            {award.title}
+            <EditableText path={`${basePath}.title`}>{award.title}</EditableText>
           </h3>
 
           <p className="text-xs sm:text-sm text-[#a2a8b8] font-sans-body font-light leading-relaxed">
-            {award.description}
+            <EditableText path={`${basePath}.description`} as="span">{award.description}</EditableText>
           </p>
         </div>
       </div>
@@ -58,4 +65,3 @@ export const AwardCard: React.FC<AwardCardProps> = ({ award }) => {
     </motion.div>
   );
 };
-

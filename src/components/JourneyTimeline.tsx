@@ -1,19 +1,25 @@
 import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { JourneyItem } from './JourneyItem';
-import { JourneyItemData } from '../types';
+import { JourneyItemData, SectionHeadingOverride } from '../types';
 import { Calendar, TrendingUp } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
+import { EditableBlock, EditableText, EditableArrayField } from '../admin/Editable';
+import { useIsEditMode } from '../admin/EditModeGuard';
+
 interface JourneyTimelineProps {
   items: JourneyItemData[];
+  heading?: SectionHeadingOverride;
 }
 
-export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
+export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items, heading }) => {
   const [activeMobileIndex, setActiveMobileIndex] = useState(0);
   const [direction, setDirection] = useState<number>(0);
+  const isEditMode = useIsEditMode();
 
   const activeItem = items[activeMobileIndex];
+  const mobileBasePath = `journey.${activeMobileIndex}`;
 
   const handlePrev = () => {
     setDirection(-1);
@@ -61,10 +67,15 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <SectionHeading
-          eyebrow="CAREER EVOLUTION"
-          title="Two Decades of Transformation"
-          subtitle="From managing live site construction in Mumbai to scaling a top-5 developer in Dubai and establishing a ₹4,500 Cr order book across India."
+          eyebrow={heading?.eyebrow ?? 'CAREER EVOLUTION'}
+          title={heading?.title ?? 'Two Decades of Transformation'}
+          subtitle={heading?.subtitle ?? "From managing live site construction in Mumbai to scaling a top-5 developer in Dubai and establishing a ₹4,500 Cr order book across India."}
           align="center"
+          editPaths={{
+            eyebrow: 'settings.headings.journey.eyebrow',
+            title: 'settings.headings.journey.title',
+            subtitle: 'settings.headings.journey.subtitle',
+          }}
         />
 
         {/* --- MOBILE CAROUSEL & YEAR SELECTOR DECK (Visible on mobile/tablet < lg) --- */}
@@ -75,6 +86,8 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
             {items.map((item, idx) => (
               <button
                 key={item.id}
+                type="button"
+                data-edit-allow
                 onClick={() => {
                   setDirection(idx > activeMobileIndex ? 1 : -1);
                   setActiveMobileIndex(idx);
@@ -99,7 +112,7 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
           </div>
 
           {/* Active Career Phase Card with Touch & Motion Drag */}
-          <div className="cursor-grab active:cursor-grabbing select-none relative bg-[#141822] border border-[#2a3040] rounded-lg p-6 shadow-2xl overflow-hidden">
+          <div className={`cursor-grab active:cursor-grabbing select-none relative bg-[#141822] border border-[#2a3040] rounded-lg p-6 shadow-2xl overflow-hidden ${isEditMode ? 'ring-1 ring-[var(--admin-accent,#c5a880)]/30' : ''}`}>
             <div className="absolute top-0 right-0 w-32 h-32 bg-[#c5a880]/5 rounded-full blur-2xl pointer-events-none" />
             
             <AnimatePresence mode="wait" custom={direction}>
@@ -111,48 +124,51 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
                 animate="center"
                 exit="exit"
                 transition={{ duration: 0.28, ease: 'easeOut' }}
-                drag="x"
+                drag={isEditMode ? false : 'x'}
                 dragConstraints={{ left: 0, right: 0 }}
                 dragElastic={0.15}
-                onDragEnd={handleDragEnd}
+                onDragEnd={isEditMode ? undefined : handleDragEnd}
                 className="space-y-4"
+                data-edit-path={isEditMode ? mobileBasePath : undefined}
               >
                 <div className="flex items-center justify-between border-b border-[#232835] pb-3">
                   <span className="text-xs font-mono text-[#c5a880] bg-[#c5a880]/10 border border-[#c5a880]/20 px-2.5 py-1 rounded-sm font-semibold">
-                    {activeItem.company}
+                    <EditableText path={`${mobileBasePath}.year`}>{activeItem.year}</EditableText>
                   </span>
                   <span className="text-[11px] font-mono text-[#6b7280]">
-                    {activeItem.location}
+                    <EditableText path={`${mobileBasePath}.location`}>{activeItem.location}</EditableText>
                   </span>
                 </div>
 
                 <div>
                   <h3 className="text-xl font-serif-title font-bold text-[#f3f2ee] mb-1">
-                    {activeItem.role}
+                    <EditableText path={`${mobileBasePath}.title`}>{activeItem.title}</EditableText>
                   </h3>
-                  <p className="text-sm font-mono text-[#c5a880]">
-                    {activeItem.year}
-                  </p>
                 </div>
 
                 <p className="text-xs text-[#a2a8b8] font-sans-body leading-relaxed">
-                  {activeItem.description}
+                  <EditableText path={`${mobileBasePath}.description`} as="span">{activeItem.description}</EditableText>
                 </p>
 
-                {/* Highlights List */}
-                <div className="space-y-2 pt-2 border-t border-[#1e2330]">
-                  <span className="text-[10px] uppercase font-mono tracking-wider text-[#c5a880] font-semibold flex items-center gap-1">
-                    <TrendingUp className="w-3 h-3" /> Strategic Milestones
-                  </span>
-                  <ul className="space-y-1.5">
-                    {activeItem.highlights.map((h, i) => (
-                      <li key={i} className="text-xs text-[#d1d5db] font-sans-body flex items-start gap-2">
-                        <span className="text-[#c5a880] text-sm leading-none mt-0.5">•</span>
-                        <span>{h}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                {activeItem.highlights && activeItem.highlights.length > 0 && (
+                  <EditableArrayField
+                    path={`${mobileBasePath}.highlights`}
+                    className="space-y-2 pt-2 border-t border-[#1e2330]"
+                    label="Edit highlights"
+                  >
+                    <span className="text-[10px] uppercase font-mono tracking-wider text-[#c5a880] font-semibold flex items-center gap-1">
+                      <TrendingUp className="w-3 h-3" /> Strategic Milestones
+                    </span>
+                    <ul className="space-y-1.5">
+                      {activeItem.highlights.map((h, i) => (
+                        <li key={i} className="text-xs text-[#d1d5db] font-sans-body flex items-start gap-2">
+                          <span className="text-[#c5a880] text-sm leading-none mt-0.5">•</span>
+                          <span>{h}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </EditableArrayField>
+                )}
               </motion.div>
             </AnimatePresence>
 
@@ -162,6 +178,8 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
                 {items.map((_, idx) => (
                   <button
                     key={idx}
+                    type="button"
+                    data-edit-allow
                     onClick={() => {
                       setDirection(idx > activeMobileIndex ? 1 : -1);
                       setActiveMobileIndex(idx);
@@ -186,12 +204,9 @@ export const JourneyTimeline: React.FC<JourneyTimelineProps> = ({ items }) => {
           {/* Timeline Items */}
           <div className="space-y-0">
             {items.map((item, index) => (
-              <JourneyItem
-                key={item.id}
-                item={item}
-                index={index}
-                isEven={index % 2 === 0}
-              />
+              <EditableBlock key={item.id} path={`journey.${index}`} label={item.year}>
+                <JourneyItem item={item} index={index} isEven={index % 2 === 0} basePath={`journey.${index}`} />
+              </EditableBlock>
             ))}
           </div>
 

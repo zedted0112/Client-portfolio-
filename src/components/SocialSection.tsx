@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { SocialCard } from './SocialCard';
 import { VideoCard } from './VideoCard';
-import { SocialPostData, VideoItemData } from '../types';
+import { SocialPostData, VideoItemData, SectionHeadingOverride } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
+import { EditableBlock } from '../admin/Editable';
 
 interface SocialSectionProps {
   posts: SocialPostData[];
   videos: VideoItemData[];
+  heading?: SectionHeadingOverride;
 }
 
-export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) => {
+export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos, heading }) => {
   const [activePostIndex, setActivePostIndex] = useState(0);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
 
@@ -55,9 +57,15 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <SectionHeading
-          eyebrow="THOUGHT LEADERSHIP & FIELD VISITS"
-          title="Perspectives & Ground Realities"
-          subtitle="Regular insights on urban planning, real estate investment trends, construction technology, and behind-the-scenes site walkthroughs."
+          eyebrow={heading?.eyebrow ?? 'THOUGHT LEADERSHIP & FIELD VISITS'}
+          title={heading?.title ?? 'Perspectives & Ground Realities'}
+          subtitle={heading?.subtitle ?? 'Regular insights on urban planning, real estate investment trends, construction technology, and behind-the-scenes site walkthroughs.'}
+          align="center"
+          editPaths={{
+            eyebrow: 'settings.headings.insights.eyebrow',
+            title: 'settings.headings.insights.title',
+            subtitle: 'settings.headings.insights.subtitle',
+          }}
         />
 
         {/* Subsection 1: Latest Insights (LinkedIn) */}
@@ -89,7 +97,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <SocialCard post={activePost} />
+                  <SocialCard post={activePost} basePath={`socialPosts.${activePostIndex}`} />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -100,6 +108,8 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
                 {posts.map((_, i) => (
                   <button
                     key={i}
+                    type="button"
+                    data-edit-allow
                     onClick={() => setActivePostIndex(i)}
                     aria-label={`Go to post ${i + 1}`}
                     className={`h-2.5 rounded-full transition-all cursor-pointer ${
@@ -113,8 +123,10 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
 
           {/* DESKTOP GRID */}
           <div className="hidden md:grid md:grid-cols-2 gap-8">
-            {posts.map((post) => (
-              <SocialCard key={post.id} post={post} />
+            {posts.map((post, idx) => (
+              <EditableBlock key={post.id} path={`socialPosts.${idx}`} label={post.title}>
+                <SocialCard post={post} basePath={`socialPosts.${idx}`} />
+              </EditableBlock>
             ))}
           </div>
         </div>
@@ -148,7 +160,7 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.25 }}
                 >
-                  <VideoCard video={activeVideo} />
+                  <VideoCard video={activeVideo} basePath={`videos.${activeVideoIndex}`} />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -159,6 +171,8 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
                 {videos.map((_, i) => (
                   <button
                     key={i}
+                    type="button"
+                    data-edit-allow
                     onClick={() => setActiveVideoIndex(i)}
                     aria-label={`Go to video ${i + 1}`}
                     className={`h-2.5 rounded-full transition-all cursor-pointer ${
@@ -172,8 +186,10 @@ export const SocialSection: React.FC<SocialSectionProps> = ({ posts, videos }) =
 
           {/* DESKTOP GRID */}
           <div className="hidden md:grid md:grid-cols-3 gap-8">
-            {videos.map((video) => (
-              <VideoCard key={video.id} video={video} />
+            {videos.map((video, idx) => (
+              <EditableBlock key={video.id} path={`videos.${idx}`} label={video.title}>
+                <VideoCard video={video} basePath={`videos.${idx}`} />
+              </EditableBlock>
             ))}
           </div>
         </div>

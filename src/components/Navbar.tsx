@@ -3,11 +3,13 @@ import { Menu, X, ArrowUpRight, ChevronDown } from 'lucide-react';
 import { NavItem } from '../types';
 import { motion, AnimatePresence } from 'motion/react';
 import { scrollToElement } from '../utils/scroll';
+import { EditableText } from '../admin/Editable';
+import { useAdminOptional } from '../admin/AdminContext';
 
 interface NavbarProps {
   navItems: NavItem[];
   personalName: string;
-  personalTitle: string;
+  personalShortTitle: string;
 }
 
 const SHORT_LABELS: Record<string, string> = {
@@ -26,8 +28,10 @@ const getNavLabel = (item: NavItem, compact = false) =>
 export const Navbar: React.FC<NavbarProps> = ({
   navItems,
   personalName,
-  personalTitle
+  personalShortTitle,
 }) => {
+  const admin = useAdminOptional();
+  const isEditMode = admin?.editMode ?? false;
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [moreMenuOpen, setMoreMenuOpen] = useState(false);
@@ -66,6 +70,7 @@ export const Navbar: React.FC<NavbarProps> = ({
     variant: 'inline' | 'dropdown' = 'inline'
   ) => {
     const sectionId = getSectionId(item.href);
+    const navIdx = navItems.indexOf(item);
     const isActive = activeSection === sectionId;
 
     const inlineClasses = `relative px-2.5 xl:px-3 py-1.5 text-[11px] xl:text-xs font-sans-body tracking-wide transition-colors rounded-xs whitespace-nowrap ${
@@ -79,6 +84,25 @@ export const Navbar: React.FC<NavbarProps> = ({
         ? 'bg-[#1a1e27] text-[#c5a880] font-semibold'
         : 'text-[#9fa4b0] hover:text-[#f3f2ee] hover:bg-[#161a22]'
     }`;
+
+    if (isEditMode) {
+      return (
+        <span
+          key={`${item.href}-${navIdx}`}
+          data-edit-path={`navigation.${navIdx}`}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            admin?.selectPath(`navigation.${navIdx}`);
+            admin?.setPanelTab('edit');
+          }}
+          className={`${variant === 'dropdown' ? dropdownClasses : inlineClasses} cursor-pointer`}
+          title={`Edit nav: ${item.label}`}
+        >
+          <EditableText path={`navigation.${navIdx}.label`}>{getNavLabel(item, compact)}</EditableText>
+        </span>
+      );
+    }
 
     return (
       <a
@@ -132,13 +156,17 @@ export const Navbar: React.FC<NavbarProps> = ({
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center gap-4">
         {/* Brand Logo & Title */}
-        <a
-          href="#hero"
+        <div
           onClick={(e) => {
-            e.preventDefault();
+            if (isEditMode) {
+              e.preventDefault();
+              admin?.selectPath('personal.name');
+              admin?.setPanelTab('edit');
+              return;
+            }
             scrollToElement('hero');
           }}
-          className="flex items-center gap-3 group shrink-0 min-w-0"
+          className="flex items-center gap-3 group shrink-0 min-w-0 cursor-pointer"
         >
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -148,13 +176,13 @@ export const Navbar: React.FC<NavbarProps> = ({
           </motion.div>
           <div className="flex flex-col min-w-0">
             <span className="font-serif-title font-semibold text-base sm:text-lg text-[#f3f2ee] tracking-tight group-hover:text-[#c5a880] transition-colors truncate">
-              {personalName}
+              <EditableText path="personal.name">{personalName}</EditableText>
             </span>
             <span className="text-[10px] text-[#9fa4b0] font-mono tracking-wider uppercase hidden xl:inline-block truncate">
-              Nyshaa Realty & Sukoon Stays
+              <EditableText path="personal.shortTitle">{personalShortTitle}</EditableText>
             </span>
           </div>
-        </a>
+        </div>
 
         {/* Desktop Navigation */}
         <nav className="hidden lg:flex flex-1 items-center justify-center min-w-0">
@@ -165,6 +193,8 @@ export const Navbar: React.FC<NavbarProps> = ({
             {secondaryLinks.length > 0 && (
               <div ref={moreMenuRef} className="relative 2xl:hidden">
                 <button
+                  type="button"
+                  data-edit-allow
                   onClick={() => setMoreMenuOpen((open) => !open)}
                   aria-expanded={moreMenuOpen}
                   aria-haspopup="true"
@@ -207,22 +237,40 @@ export const Navbar: React.FC<NavbarProps> = ({
 
         {/* Header actions & mobile toggle — theme switcher hidden for now */}
         <div className="flex items-center gap-2 sm:gap-2.5 shrink-0 ml-auto lg:ml-0">
-          <motion.a
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            href="#contact"
-            onClick={(e) => {
-              e.preventDefault();
-              scrollToElement('contact');
-            }}
-            className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-sm bg-[#c5a880] text-[#0d0f12] hover:bg-[#d6ba92] transition-colors shadow-md shadow-[#c5a880]/10"
-          >
-            <span>Contact</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </motion.a>
+          {isEditMode ? (
+            <span
+              data-edit-path="contact.sectionHeading"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                admin?.selectPath('contact.sectionHeading');
+                admin?.setPanelTab('edit');
+              }}
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-sm bg-[#c5a880] text-[#0d0f12] cursor-pointer"
+            >
+              <span>Contact CTA</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </span>
+          ) : (
+            <motion.a
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              href="#contact"
+              onClick={(e) => {
+                e.preventDefault();
+                scrollToElement('contact');
+              }}
+              className="hidden sm:inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2 rounded-sm bg-[#c5a880] text-[#0d0f12] hover:bg-[#d6ba92] transition-colors shadow-md shadow-[#c5a880]/10"
+            >
+              <span>Contact</span>
+              <ArrowUpRight className="w-3.5 h-3.5" />
+            </motion.a>
+          )}
 
           {/* Mobile Menu Button */}
           <button
+            type="button"
+            data-edit-allow
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="lg:hidden p-2 rounded-sm bg-[#161920] text-[#f3f2ee] border border-[#2a2f3d] hover:border-[#c5a880] transition-colors"
             aria-label="Toggle navigation menu"
@@ -243,9 +291,30 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="lg:hidden fixed inset-x-0 top-[60px] bg-[#0e1116] border-b border-[#262b38] shadow-2xl p-6 backdrop-blur-xl"
           >
             <div className="grid grid-cols-2 gap-2 max-h-[70vh] overflow-y-auto pr-1">
-              {navItems.map((item) => {
+              {navItems.map((item, navIdx) => {
                 const sectionId = item.href.substring(1);
                 const isActive = activeSection === sectionId;
+                if (isEditMode) {
+                  return (
+                    <span
+                      key={`${item.href}-${navIdx}`}
+                      data-edit-path={`navigation.${navIdx}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        admin?.selectPath(`navigation.${navIdx}`);
+                        admin?.setPanelTab('edit');
+                      }}
+                      className={`p-3 text-xs rounded-sm border transition-all cursor-pointer ${
+                        isActive
+                          ? 'bg-[#1a1e27] text-[#c5a880] border-[#c5a880]/50 font-semibold'
+                          : 'bg-[#13161c] text-[#9fa4b0] border-[#202532] hover:text-[#f3f2ee]'
+                      }`}
+                    >
+                      <EditableText path={`navigation.${navIdx}.label`}>{item.label}</EditableText>
+                    </span>
+                  );
+                }
                 return (
                   <a
                     key={item.href}

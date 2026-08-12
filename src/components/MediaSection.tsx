@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { MediaCard } from './MediaCard';
-import { MediaArticleData } from '../types';
+import { MediaArticleData, SectionHeadingOverride } from '../types';
 import { Newspaper } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { EditableBlock } from '../admin/Editable';
 
 interface MediaSectionProps {
   articles: MediaArticleData[];
+  heading?: SectionHeadingOverride;
 }
 
-export const MediaSection: React.FC<MediaSectionProps> = ({ articles }) => {
+export const MediaSection: React.FC<MediaSectionProps> = ({ articles, heading }) => {
   const [mobileIndex, setMobileIndex] = useState(0);
   const [direction, setDirection] = useState<number>(0);
 
@@ -57,9 +59,15 @@ export const MediaSection: React.FC<MediaSectionProps> = ({ articles }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <SectionHeading
-          eyebrow="PRESS & MEDIA"
-          title="In the Press"
-          subtitle="Coverage, features, and thought leadership articles across national business dailies, real estate journals, and news portals."
+          eyebrow={heading?.eyebrow ?? 'PRESS & MEDIA'}
+          title={heading?.title ?? 'In the Press'}
+          subtitle={heading?.subtitle ?? 'Coverage, features, and thought leadership articles across national business dailies, real estate journals, and news portals.'}
+          align="center"
+          editPaths={{
+            eyebrow: 'settings.headings.media.eyebrow',
+            title: 'settings.headings.media.title',
+            subtitle: 'settings.headings.media.subtitle',
+          }}
         />
 
         {/* --- MOBILE CAROUSEL (Visible on < md) --- */}
@@ -88,7 +96,7 @@ export const MediaSection: React.FC<MediaSectionProps> = ({ articles }) => {
                   onDragEnd={handleDragEnd}
                   className="w-full"
                 >
-                  <MediaCard article={activeArticle} />
+                  <MediaCard article={activeArticle} basePath={`media.${mobileIndex}`} />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -116,8 +124,10 @@ export const MediaSection: React.FC<MediaSectionProps> = ({ articles }) => {
 
         {/* --- DESKTOP GRID (Visible on md+ screens) --- */}
         <div className="hidden md:grid md:grid-cols-2 gap-8">
-          {articles.map((article) => (
-            <MediaCard key={article.id} article={article} />
+          {articles.map((article, idx) => (
+            <EditableBlock key={article.id} path={`media.${idx}`} label={article.title}>
+              <MediaCard article={article} basePath={`media.${idx}`} />
+            </EditableBlock>
           ))}
         </div>
 

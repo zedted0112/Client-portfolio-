@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { ProjectCard } from './ProjectCard';
-import { ProjectData } from '../types';
+import { ProjectData, SectionHeadingOverride } from '../types';
 import { Layers } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { EditableBlock } from '../admin/Editable';
 
 interface ProjectGridProps {
   projects: ProjectData[];
+  heading?: SectionHeadingOverride;
 }
 
-export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects }) => {
+export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects, heading }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [mobileProjectIndex, setMobileProjectIndex] = useState<number>(0);
   const [direction, setDirection] = useState<number>(0);
@@ -73,9 +75,15 @@ export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <SectionHeading
-          eyebrow="PORTFOLIO & LANDMARKS"
-          title="Shaping Skylines and Infrastructure"
-          subtitle="A track record of mega-scale infrastructure, diplomatic civic landmarks, and luxury residential developments delivered across Dubai and India."
+          eyebrow={heading?.eyebrow ?? 'PORTFOLIO & LANDMARKS'}
+          title={heading?.title ?? 'Shaping Skylines and Infrastructure'}
+          subtitle={heading?.subtitle ?? 'A track record of mega-scale infrastructure, diplomatic civic landmarks, and luxury residential developments delivered across Dubai and India.'}
+          align="center"
+          editPaths={{
+            eyebrow: 'settings.headings.portfolio.eyebrow',
+            title: 'settings.headings.portfolio.title',
+            subtitle: 'settings.headings.portfolio.subtitle',
+          }}
         />
 
         {/* Category Filter Pills */}
@@ -122,7 +130,7 @@ export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects }) => {
                     onDragEnd={handleDragEnd}
                     className="w-full"
                   >
-                    <ProjectCard project={activeMobileProject} />
+                    <ProjectCard project={activeMobileProject} basePath={`projects.${projects.indexOf(activeMobileProject)}`} />
                   </motion.div>
                 </AnimatePresence>
               </div>
@@ -151,9 +159,14 @@ export const ProjectGrid: React.FC<ProjectGridProps> = ({ projects }) => {
 
         {/* --- DESKTOP GRID (Visible on md+ screens) --- */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredProjects.map((project) => (
-            <ProjectCard key={project.id} project={project} />
-          ))}
+          {filteredProjects.map((project) => {
+            const idx = projects.indexOf(project);
+            return (
+              <EditableBlock key={project.id} path={`projects.${idx}`} label={project.title}>
+                <ProjectCard project={project} basePath={`projects.${idx}`} />
+              </EditableBlock>
+            );
+          })}
         </div>
 
       </div>

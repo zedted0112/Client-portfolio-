@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { VentureCard } from './VentureCard';
-import { VentureData } from '../types';
+import { VentureData, SectionHeadingOverride } from '../types';
+import { EditableBlock } from '../admin/Editable';
 import { Building2, Home } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
 interface VenturesSectionProps {
   ventures: VentureData[];
+  heading?: SectionHeadingOverride;
 }
 
-export const VenturesSection: React.FC<VenturesSectionProps> = ({ ventures }) => {
+export const VenturesSection: React.FC<VenturesSectionProps> = ({ ventures, heading }) => {
   const [activeMobileIndex, setActiveMobileIndex] = useState(0);
 
   const activeVenture = ventures[activeMobileIndex] || ventures[0];
@@ -19,9 +21,15 @@ export const VenturesSection: React.FC<VenturesSectionProps> = ({ ventures }) =>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <SectionHeading
-          eyebrow="ACTIVE ENTERPRISES"
-          title="What I'm Building Now"
-          subtitle="Directing strategic expansion across urban redevelopment, commercial IT parks, and luxury co-living ecosystems."
+          eyebrow={heading?.eyebrow ?? 'ACTIVE ENTERPRISES'}
+          title={heading?.title ?? "What I'm Building Now"}
+          subtitle={heading?.subtitle ?? 'Directing strategic expansion across urban redevelopment, commercial IT parks, and luxury co-living ecosystems.'}
+          align="center"
+          editPaths={{
+            eyebrow: 'settings.headings.ventures.eyebrow',
+            title: 'settings.headings.ventures.title',
+            subtitle: 'settings.headings.ventures.subtitle',
+          }}
         />
 
         {/* --- MOBILE VIEW: ENTERPRISE TABS & COMPACT DECK (Visible on < md) --- */}
@@ -53,7 +61,7 @@ export const VenturesSection: React.FC<VenturesSectionProps> = ({ ventures }) =>
               exit={{ opacity: 0, scale: 0.98 }}
               transition={{ duration: 0.2 }}
             >
-              <VentureCard venture={activeVenture} />
+              <VentureCard venture={activeVenture} basePath={`ventures.${activeMobileIndex}`} />
             </motion.div>
           </AnimatePresence>
 
@@ -61,8 +69,10 @@ export const VenturesSection: React.FC<VenturesSectionProps> = ({ ventures }) =>
 
         {/* --- DESKTOP GRID (Visible on md+ screens) --- */}
         <div className="hidden md:grid md:grid-cols-2 gap-8 lg:gap-12">
-          {ventures.map((venture) => (
-            <VentureCard key={venture.id} venture={venture} />
+          {ventures.map((venture, idx) => (
+            <EditableBlock key={venture.id} path={`ventures.${idx}`} label={venture.company}>
+              <VentureCard venture={venture} basePath={`ventures.${idx}`} />
+            </EditableBlock>
           ))}
         </div>
 

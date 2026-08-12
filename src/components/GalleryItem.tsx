@@ -3,22 +3,29 @@ import { GalleryItemData } from '../types';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { Maximize2 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useIsEditMode } from '../admin/EditModeGuard';
 
 interface GalleryItemProps {
   item: GalleryItemData;
+  basePath: string;
   onClick: () => void;
 }
 
-export const GalleryItem: React.FC<GalleryItemProps> = ({ item, onClick }) => {
+export const GalleryItem: React.FC<GalleryItemProps> = ({ item, basePath, onClick }) => {
+  const isEditMode = useIsEditMode();
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       whileInView={{ opacity: 1, scale: 1 }}
       viewport={{ once: true, margin: '-20px' }}
-      whileHover={{ y: -6 }}
+      whileHover={{ y: isEditMode ? 0 : -6 }}
       transition={{ duration: 0.35 }}
-      onClick={onClick}
-      className="group relative bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880] transition-all duration-300 overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl hover:shadow-[#c5a880]/15"
+      onClick={() => {
+        if (isEditMode) return;
+        onClick();
+      }}
+      className={`group relative bg-[#14171f] rounded-sm border border-[#232835] hover:border-[#c5a880] transition-all duration-300 overflow-hidden shadow-lg hover:shadow-2xl hover:shadow-[#c5a880]/15 ${isEditMode ? 'cursor-default' : 'cursor-pointer'}`}
     >
       <ImagePlaceholder
         src={item.src}
@@ -26,30 +33,22 @@ export const GalleryItem: React.FC<GalleryItemProps> = ({ item, onClick }) => {
         title={item.caption}
         category={item.category}
         iconType="gallery"
-        aspectRatio="aspect-[4/3]"
+        aspectRatio={item.aspectRatio || 'aspect-[4/3]'}
         fit="contain"
+        editPaths={{
+          src: `${basePath}.src`,
+          title: `${basePath}.caption`,
+          category: `${basePath}.category`,
+        }}
       />
 
-      {/* Hover Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f12] via-[#0d0f12]/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity p-6 flex flex-col justify-between pointer-events-none">
-        
-        <div className="flex justify-end">
+      {!isEditMode && (
+        <div className="absolute top-3 right-3 z-20 pointer-events-none">
           <div className="p-2 bg-[#1a1e28] text-[#c5a880] rounded-full border border-[#c5a880]/40 group-hover:scale-110 transition-transform">
             <Maximize2 className="w-4 h-4" />
           </div>
         </div>
-
-        <div>
-          <span className="text-[10px] font-mono uppercase tracking-widest text-[#c5a880] mb-1 block font-semibold">
-            {item.category}
-          </span>
-          <p className="text-sm font-serif-title font-medium text-[#f3f2ee] line-clamp-2 leading-snug">
-            {item.caption}
-          </p>
-        </div>
-
-      </div>
+      )}
     </motion.div>
   );
 };
-
