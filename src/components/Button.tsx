@@ -1,12 +1,14 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { scrollToElement } from '../utils/scroll';
+import { useAdminOptional } from '../admin/AdminContext';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
   size?: 'sm' | 'md' | 'lg';
   href?: string;
   showIcon?: boolean;
+  editPath?: string;
   children: React.ReactNode;
 }
 
@@ -15,10 +17,13 @@ export const Button: React.FC<ButtonProps> = ({
   size = 'md',
   href,
   showIcon = false,
+  editPath,
   children,
   className = '',
   ...props
 }) => {
+  const admin = useAdminOptional();
+  const isEditMode = admin?.editMode ?? false;
   const baseClasses = "inline-flex items-center justify-center font-sans-body font-medium transition-all duration-300 rounded-sm select-none tracking-wide text-nowrap whitespace-nowrap";
   
   const sizeClasses = {
@@ -46,6 +51,27 @@ export const Button: React.FC<ButtonProps> = ({
   if (href) {
     const isExternal = href.startsWith('http');
     const isHash = href.startsWith('#');
+
+    if (isEditMode) {
+      const path = editPath ?? '';
+      return (
+        <span
+          data-edit-path={path || undefined}
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (path && admin) {
+              admin.selectPath(path);
+              admin.setPanelTab('edit');
+            }
+          }}
+          className={`${combinedClasses} group cursor-pointer`}
+          title={path ? `Edit: ${path}` : 'Edit mode — navigation disabled'}
+        >
+          {content}
+        </span>
+      );
+    }
 
     return (
       <a

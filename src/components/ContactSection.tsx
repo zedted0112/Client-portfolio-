@@ -4,6 +4,8 @@ import { ContactData } from '../types';
 import { Mail, Phone, Linkedin, MapPin, Send, CheckCircle2, ArrowUpRight, ChevronUp } from 'lucide-react';
 import { Button } from './Button';
 import { motion, AnimatePresence } from 'motion/react';
+import { EditableText, EditableAnchor, EditableLink } from '../admin/Editable';
+import { useIsEditMode } from '../admin/EditModeGuard';
 
 interface ContactSectionProps {
   contact: ContactData;
@@ -18,9 +20,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
   });
   const [submitted, setSubmitted] = useState(false);
   const [isMobileExpanded, setIsMobileExpanded] = useState(false);
+  const isEditMode = useIsEditMode();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isEditMode) return;
     if (!formData.name || !formData.email || !formData.message) return;
 
     // Trigger mailto link or display confirmation
@@ -40,9 +44,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <SectionHeading
-          eyebrow="DIRECT ENGAGEMENT"
+          eyebrow={contact.eyebrow ?? 'DIRECT ENGAGEMENT'}
           title={contact.sectionHeading}
           subtitle={contact.subheading}
+          editPaths={{
+            eyebrow: 'contact.eyebrow',
+            title: 'contact.sectionHeading',
+            subtitle: 'contact.subheading',
+          }}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -60,50 +69,36 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
             <div className="sm:hidden bg-[#14171f] p-4 rounded-sm border border-[#232835] space-y-4 shadow-xl">
               {/* Inline icons with data below in a 3-column grid */}
               <div className="grid grid-cols-3 gap-1.5 text-center divide-x divide-[#202532]">
-                {/* Email */}
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="flex flex-col items-center px-1 group cursor-pointer"
-                >
+                <EditableAnchor path="contact.email" href={`mailto:${contact.email}`} className="flex flex-col items-center px-1 group cursor-pointer">
                   <div className="w-9 h-9 rounded-full bg-[#1c212c] border border-[#c5a880]/40 text-[#c5a880] flex items-center justify-center mb-1.5 group-hover:bg-[#c5a880] group-hover:text-[#0d0f12] transition-colors">
                     <Mail className="w-4 h-4" />
                   </div>
                   <span className="text-[9px] font-mono text-[#8c92a0] uppercase tracking-wider block">Email</span>
                   <span className="text-[11px] font-sans-body font-semibold text-[#f3f2ee] break-all group-hover:text-[#c5a880] transition-colors leading-tight mt-0.5">
-                    {contact.email}
+                    <EditableText path="contact.email">{contact.email}</EditableText>
                   </span>
-                </a>
+                </EditableAnchor>
 
-                {/* Phone */}
-                <a
-                  href={`tel:${contact.phone.replace(/\s+/g, '')}`}
-                  className="flex flex-col items-center px-1 group cursor-pointer"
-                >
+                <EditableAnchor path="contact.phone" href={`tel:${contact.phone.replace(/\s+/g, '')}`} className="flex flex-col items-center px-1 group cursor-pointer">
                   <div className="w-9 h-9 rounded-full bg-[#1c212c] border border-[#c5a880]/40 text-[#c5a880] flex items-center justify-center mb-1.5 group-hover:bg-[#c5a880] group-hover:text-[#0d0f12] transition-colors">
                     <Phone className="w-4 h-4" />
                   </div>
                   <span className="text-[9px] font-mono text-[#8c92a0] uppercase tracking-wider block">Phone</span>
                   <span className="text-[11px] font-sans-body font-semibold text-[#f3f2ee] group-hover:text-[#c5a880] transition-colors leading-tight mt-0.5">
-                    {contact.phone}
+                    <EditableText path="contact.phone">{contact.phone}</EditableText>
                   </span>
-                </a>
+                </EditableAnchor>
 
-                {/* LinkedIn */}
-                <a
-                  href={contact.linkedIn}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex flex-col items-center px-1 group cursor-pointer"
-                >
+                <EditableAnchor path="contact.linkedIn" href={contact.linkedIn} external className="flex flex-col items-center px-1 group cursor-pointer">
                   <div className="w-9 h-9 rounded-full bg-[#1c212c] border border-[#0077b5]/40 text-[#0077b5] flex items-center justify-center mb-1.5 group-hover:bg-[#0077b5] group-hover:text-white transition-colors">
                     <Linkedin className="w-4 h-4" />
                   </div>
                   <span className="text-[9px] font-mono text-[#8c92a0] uppercase tracking-wider block">LinkedIn</span>
-                  <span className="text-[11px] font-sans-body font-semibold text-[#c5a880] group-hover:underline inline-flex items-center gap-0.5 leading-tight mt-0.5">
+                  <EditableLink path="contact.linkedIn" href={contact.linkedIn} className="text-[11px] font-sans-body font-semibold text-[#c5a880] group-hover:underline inline-flex items-center gap-0.5 leading-tight mt-0.5">
                     <span>Connect</span>
                     <ArrowUpRight className="w-2.5 h-2.5" />
-                  </span>
-                </a>
+                  </EditableLink>
+                </EditableAnchor>
               </div>
 
               {/* Office Address below */}
@@ -113,18 +108,13 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
                   <span>Corporate Office</span>
                 </div>
                 <p className="text-[11px] text-[#a2a8b8] font-sans-body leading-relaxed max-w-xs">
-                  {contact.officeAddress}
+                  <EditableText path="contact.officeAddress" as="span">{contact.officeAddress}</EditableText>
                 </p>
-                {contact.googleMapsUrl && (
-                  <a
-                    href={contact.googleMapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[10px] font-mono text-[#c5a880] hover:underline mt-0.5"
-                  >
+                {(contact.googleMapsUrl || isEditMode) && (
+                  <EditableLink path="contact.googleMapsUrl" href={contact.googleMapsUrl || '#'} className="inline-flex items-center gap-1 text-[10px] font-mono text-[#c5a880] hover:underline mt-0.5">
                     <span>Open in Google Maps</span>
                     <ArrowUpRight className="w-2.5 h-2.5" />
-                  </a>
+                  </EditableLink>
                 )}
               </div>
             </div>
@@ -138,11 +128,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
                   Contact Information
                 </h3>
 
-                {/* Email */}
-                <a
-                  href={`mailto:${contact.email}`}
-                  className="flex items-center gap-3 sm:gap-4 group p-2 sm:p-3 rounded-xs hover:bg-[#1a1e28] transition-colors"
-                >
+                <EditableAnchor path="contact.email" href={`mailto:${contact.email}`} className="flex items-center gap-3 sm:gap-4 group p-2 sm:p-3 rounded-xs hover:bg-[#1a1e28] transition-colors">
                   <div className="p-2 sm:p-3 bg-[#1c212c] rounded-sm text-[#c5a880] border border-[#c5a880]/30 group-hover:border-[#c5a880] shrink-0">
                     <Mail className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
@@ -151,16 +137,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
                       Email Address
                     </span>
                     <p className="text-xs sm:text-sm font-sans-body font-semibold text-[#f3f2ee] group-hover:text-[#c5a880] transition-colors truncate">
-                      {contact.email}
+                      <EditableText path="contact.email">{contact.email}</EditableText>
                     </p>
                   </div>
-                </a>
+                </EditableAnchor>
 
-                {/* Phone */}
-                <a
-                  href={`tel:${contact.phone.replace(/\s+/g, '')}`}
-                  className="flex items-center gap-3 sm:gap-4 group p-2 sm:p-3 rounded-xs hover:bg-[#1a1e28] transition-colors"
-                >
+                <EditableAnchor path="contact.phone" href={`tel:${contact.phone.replace(/\s+/g, '')}`} className="flex items-center gap-3 sm:gap-4 group p-2 sm:p-3 rounded-xs hover:bg-[#1a1e28] transition-colors">
                   <div className="p-2 sm:p-3 bg-[#1c212c] rounded-sm text-[#c5a880] border border-[#c5a880]/30 group-hover:border-[#c5a880] shrink-0">
                     <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
@@ -169,18 +151,12 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
                       Direct Phone
                     </span>
                     <p className="text-xs sm:text-sm font-sans-body font-semibold text-[#f3f2ee] group-hover:text-[#c5a880] transition-colors truncate">
-                      {contact.phone}
+                      <EditableText path="contact.phone">{contact.phone}</EditableText>
                     </p>
                   </div>
-                </a>
+                </EditableAnchor>
 
-                {/* LinkedIn */}
-                <a
-                  href={contact.linkedIn}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 sm:gap-4 group p-2 sm:p-3 rounded-xs hover:bg-[#1a1e28] transition-colors"
-                >
+                <EditableAnchor path="contact.linkedIn" href={contact.linkedIn} external className="flex items-center gap-3 sm:gap-4 group p-2 sm:p-3 rounded-xs hover:bg-[#1a1e28] transition-colors">
                   <div className="p-2 sm:p-3 bg-[#1c212c] rounded-sm text-[#0077b5] border border-[#0077b5]/30 group-hover:border-[#0077b5] shrink-0">
                     <Linkedin className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
@@ -191,11 +167,11 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
                       </span>
                       <ArrowUpRight className="w-3.5 h-3.5 text-[#c5a880] shrink-0" />
                     </div>
-                    <p className="text-xs sm:text-sm font-sans-body font-semibold text-[#f3f2ee] group-hover:text-[#c5a880] transition-colors truncate">
-                      Connect on LinkedIn
-                    </p>
+                    <EditableLink path="contact.linkedIn" href={contact.linkedIn} className="text-xs sm:text-sm font-sans-body font-semibold text-[#f3f2ee] group-hover:text-[#c5a880] transition-colors truncate block">
+                      {contact.linkedIn || 'Add LinkedIn URL'}
+                    </EditableLink>
                   </div>
-                </a>
+                </EditableAnchor>
 
               </div>
 
@@ -208,19 +184,14 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ contact }) => {
                   </h3>
                 </div>
                 <p className="text-xs sm:text-sm text-[#a2a8b8] font-sans-body leading-relaxed">
-                  {contact.officeAddress}
+                  <EditableText path="contact.officeAddress" as="span">{contact.officeAddress}</EditableText>
                 </p>
 
-                {contact.googleMapsUrl && (
-                  <a
-                    href={contact.googleMapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-mono text-[#c5a880] hover:underline pt-1 sm:pt-2"
-                  >
+                {(contact.googleMapsUrl || isEditMode) && (
+                  <EditableLink path="contact.googleMapsUrl" href={contact.googleMapsUrl || '#'} className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-mono text-[#c5a880] hover:underline pt-1 sm:pt-2">
                     <span>Open in Google Maps</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
-                  </a>
+                  </EditableLink>
                 )}
               </div>
             </div>

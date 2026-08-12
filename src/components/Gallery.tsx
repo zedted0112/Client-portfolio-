@@ -1,26 +1,33 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { GalleryModal } from './GalleryModal';
-import { GalleryItemData } from '../types';
+import { GalleryItemData, SectionHeadingOverride } from '../types';
 import { ChevronLeft, ChevronRight, Maximize2, Pause, Play } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ImagePlaceholder } from './ImagePlaceholder';
+import { EditableText } from '../admin/Editable';
+import { useIsEditMode } from '../admin/EditModeGuard';
+import { useAdminOptional } from '../admin/AdminContext';
 
 interface GalleryProps {
   gallery: GalleryItemData[];
+  heading?: SectionHeadingOverride;
 }
 
 const AUTOPLAY_MS = 3000;
 
-export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
+export const Gallery: React.FC<GalleryProps> = ({ gallery, heading }) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [activeModalIndex, setActiveModalIndex] = useState<number | null>(null);
   const [isPlaying, setIsPlaying] = useState(true);
   const [progress, setProgress] = useState(0);
+  const isEditMode = useIsEditMode();
+  const admin = useAdminOptional();
 
   const activeItem = gallery[activeIndex];
   const selectedItem = activeModalIndex !== null ? gallery[activeModalIndex] : null;
+  const basePath = `gallery.${activeIndex}`;
 
   const goTo = useCallback((idx: number) => {
     setDirection(idx > activeIndex ? 1 : idx < activeIndex ? -1 : 0);
@@ -41,12 +48,13 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
   }, [gallery.length]);
 
   const handleDragEnd = (_: unknown, info: { offset: { x: number }; velocity: { x: number } }) => {
+    if (isEditMode) return;
     if (info.offset.x < -30 || info.velocity.x < -300) handleNext();
     else if (info.offset.x > 30 || info.velocity.x > 300) handlePrev();
   };
 
   useEffect(() => {
-    if (!isPlaying || gallery.length <= 1 || activeModalIndex !== null) return;
+    if (!isPlaying || isEditMode || gallery.length <= 1 || activeModalIndex !== null) return;
 
     setProgress(0);
     let elapsed = 0;
@@ -59,7 +67,7 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
     }, tick);
 
     return () => window.clearInterval(interval);
-  }, [isPlaying, activeIndex, gallery.length, handleNext, activeModalIndex]);
+  }, [isPlaying, isEditMode, activeIndex, gallery.length, handleNext, activeModalIndex]);
 
   const variants = {
     enter: (dir: number) => ({ x: dir > 0 ? 100 : -100, opacity: 0, scale: 0.98 }),
@@ -71,13 +79,18 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
     <section id="gallery" className="py-20 sm:py-28 bg-[#0d0f12] relative overflow-hidden border-t border-[#1e232e]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <SectionHeading
-          eyebrow="EXECUTIVE VISUAL ARCHIVE"
-          title="Visual Journey"
-          subtitle="Moments on active construction sites, award ceremonies, architectural renders, and keynote industry engagements."
+          eyebrow={heading?.eyebrow ?? 'EXECUTIVE VISUAL ARCHIVE'}
+          title={heading?.title ?? 'Visual Journey'}
+          subtitle={heading?.subtitle ?? 'Moments on active construction sites, award ceremonies, architectural renders, and keynote industry engagements.'}
+          align="center"
+          editPaths={{
+            eyebrow: 'settings.headings.gallery.eyebrow',
+            title: 'settings.headings.gallery.title',
+            subtitle: 'settings.headings.gallery.subtitle',
+          }}
         />
 
         <div className="mt-10 sm:mt-12">
-          {/* Controls row */}
           <div className="flex items-center justify-between gap-4 mb-4">
             <div className="text-xs font-mono text-[#c5a880] font-semibold">
               {activeIndex + 1} / {gallery.length}
@@ -86,33 +99,41 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
             <div className="flex items-center gap-2">
               <button
                 type="button"
+                data-edit-allow
                 onClick={() => setIsPlaying((p) => !p)}
                 className="p-2 rounded-sm border border-[#232835] text-[#9fa4b0] hover:text-[#c5a880] hover:border-[#c5a880]/40 transition-colors"
                 aria-label={isPlaying ? 'Pause slideshow' : 'Play slideshow'}
               >
                 {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
               </button>
-              <button type="button" onClick={handlePrev} className="p-2 rounded-sm border border-[#232835] text-[#9fa4b0] hover:text-[#c5a880] hover:border-[#c5a880]/40 transition-colors" aria-label="Previous image">
+              <button type="button" data-edit-allow onClick={handlePrev} className="p-2 rounded-sm border border-[#232835] text-[#9fa4b0] hover:text-[#c5a880] hover:border-[#c5a880]/40 transition-colors" aria-label="Previous image">
                 <ChevronLeft className="w-4 h-4" />
               </button>
-              <button type="button" onClick={handleNext} className="p-2 rounded-sm border border-[#232835] text-[#9fa4b0] hover:text-[#c5a880] hover:border-[#c5a880]/40 transition-colors" aria-label="Next image">
+              <button type="button" data-edit-allow onClick={handleNext} className="p-2 rounded-sm border border-[#232835] text-[#9fa4b0] hover:text-[#c5a880] hover:border-[#c5a880]/40 transition-colors" aria-label="Next image">
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
           </div>
 
-          {/* Progress bar */}
           <div className="h-0.5 bg-[#232835] rounded-full mb-6 overflow-hidden">
-            <motion.div className="h-full bg-[#c5a880]" animate={{ width: `${isPlaying ? progress : 0}%` }} transition={{ duration: 0.05, ease: 'linear' }} />
+            <motion.div className="h-full bg-[#c5a880]" animate={{ width: `${isPlaying && !isEditMode ? progress : 0}%` }} transition={{ duration: 0.05, ease: 'linear' }} />
           </div>
 
-          {/* Main slideshow — fixed frame so slide changes never resize the UI */}
           <div
             className="relative"
-            onMouseEnter={() => setIsPlaying(false)}
-            onMouseLeave={() => setIsPlaying(true)}
+            onMouseEnter={() => !isEditMode && setIsPlaying(false)}
+            onMouseLeave={() => !isEditMode && setIsPlaying(true)}
           >
-            <div className="relative aspect-[16/10] w-full bg-[#0e1116] border border-[#232835] rounded-sm shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing">
+            <div
+              className="relative aspect-[16/10] w-full bg-[#0e1116] border border-[#232835] rounded-sm shadow-2xl overflow-hidden cursor-grab active:cursor-grabbing"
+              data-edit-path={isEditMode ? basePath : undefined}
+              onClick={(e) => {
+                if (!isEditMode) return;
+                e.stopPropagation();
+                admin?.selectPath(basePath);
+                admin?.setPanelTab('edit');
+              }}
+            >
               <AnimatePresence mode="wait" custom={direction} initial={false}>
                 <motion.div
                   key={activeItem.id}
@@ -122,7 +143,7 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
                   animate="center"
                   exit="exit"
                   transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                  drag="x"
+                  drag={isEditMode ? false : 'x'}
                   dragConstraints={{ left: 0, right: 0 }}
                   dragElastic={0.12}
                   onDragEnd={handleDragEnd}
@@ -130,36 +151,47 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
                 >
                   <div
                     className="relative w-full h-full group cursor-pointer"
-                    onClick={() => setActiveModalIndex(activeIndex)}
+                    onClick={() => {
+                      if (isEditMode) return;
+                      setActiveModalIndex(activeIndex);
+                    }}
                   >
-                    {activeItem.src ? (
-                      <img
-                        src={activeItem.src}
-                        alt={activeItem.caption}
-                        className="absolute inset-0 w-full h-full object-contain object-center bg-[#0e1116]"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-[#0e1116]" />
-                    )}
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f12]/90 via-transparent to-transparent pointer-events-none" />
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setActiveModalIndex(activeIndex);
+                    <ImagePlaceholder
+                      src={activeItem.src}
+                      alt={activeItem.caption}
+                      title={activeItem.caption}
+                      category={activeItem.category}
+                      iconType="gallery"
+                      aspectRatio="h-full"
+                      fit="contain"
+                      className="h-full w-full"
+                      showImageOverlay={false}
+                      editPaths={{
+                        src: `${basePath}.src`,
+                        title: `${basePath}.caption`,
+                        category: `${basePath}.category`,
                       }}
-                      className="absolute top-4 right-4 p-2.5 bg-[#1a1e28]/90 text-[#c5a880] rounded-full border border-[#c5a880]/40 hover:scale-110 transition-transform z-10"
-                      aria-label="Expand image"
-                    >
-                      <Maximize2 className="w-4 h-4" />
-                    </button>
-                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 pointer-events-none min-h-[7.5rem] flex flex-col justify-end">
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-[#0d0f12]/90 via-transparent to-transparent pointer-events-none" />
+                    {!isEditMode && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveModalIndex(activeIndex);
+                        }}
+                        className="absolute top-4 right-4 p-2.5 bg-[#1a1e28]/90 text-[#c5a880] rounded-full border border-[#c5a880]/40 hover:scale-110 transition-transform z-10"
+                        aria-label="Expand image"
+                      >
+                        <Maximize2 className="w-4 h-4" />
+                      </button>
+                    )}
+                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-8 min-h-[7.5rem] flex flex-col justify-end z-10">
                       <span className="text-[10px] font-mono uppercase tracking-widest text-[#c5a880] mb-2 block font-semibold">
-                        {activeItem.category}
+                        <EditableText path={`${basePath}.category`}>{activeItem.category}</EditableText>
                       </span>
                       <p className="text-lg sm:text-xl font-serif-title font-medium text-[#f3f2ee] leading-snug max-w-3xl line-clamp-2">
-                        {activeItem.caption}
+                        <EditableText path={`${basePath}.caption`}>{activeItem.caption}</EditableText>
                       </p>
                     </div>
                   </div>
@@ -167,9 +199,9 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
               </AnimatePresence>
             </div>
 
-            {/* Side arrows desktop */}
             <button
               type="button"
+              data-edit-allow
               onClick={handlePrev}
               className="hidden lg:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-20 w-11 h-11 items-center justify-center rounded-full bg-[#14171f] border border-[#c5a880]/40 text-[#c5a880] shadow-xl hover:bg-[#c5a880] hover:text-[#0d0f12] transition-colors"
               aria-label="Previous image"
@@ -178,6 +210,7 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
             </button>
             <button
               type="button"
+              data-edit-allow
               onClick={handleNext}
               className="hidden lg:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-20 w-11 h-11 items-center justify-center rounded-full bg-[#14171f] border border-[#c5a880]/40 text-[#c5a880] shadow-xl hover:bg-[#c5a880] hover:text-[#0d0f12] transition-colors"
               aria-label="Next image"
@@ -186,12 +219,12 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
             </button>
           </div>
 
-          {/* Thumbnail strip */}
           <div className="mt-6 flex gap-3 overflow-x-auto pb-2 scrollbar-none">
             {gallery.map((item, idx) => (
               <button
                 key={item.id}
                 type="button"
+                data-edit-allow
                 onClick={() => goTo(idx)}
                 className={`relative shrink-0 w-24 sm:w-28 rounded-sm overflow-hidden border-2 transition-all ${
                   activeIndex === idx
@@ -214,12 +247,12 @@ export const Gallery: React.FC<GalleryProps> = ({ gallery }) => {
             ))}
           </div>
 
-          {/* Dots */}
           <div className="flex items-center justify-center gap-2 pt-4">
             {gallery.map((item, idx) => (
               <button
                 key={item.id}
                 type="button"
+                data-edit-allow
                 onClick={() => goTo(idx)}
                 aria-label={`Go to slide ${idx + 1}`}
                 className={`h-2 rounded-full transition-all ${

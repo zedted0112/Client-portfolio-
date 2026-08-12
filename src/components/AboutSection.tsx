@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { ImagePlaceholder } from './ImagePlaceholder';
 import { AboutData } from '../types';
-import { GraduationCap, Quote, ChevronDown, ChevronUp, UserCheck } from 'lucide-react';
+import { GraduationCap, Quote, ChevronDown, ChevronUp } from 'lucide-react';
 import { motion } from 'motion/react';
+import { EditableText, EditableBlock } from '../admin/Editable';
 
 interface AboutSectionProps {
   about: AboutData;
@@ -20,6 +21,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ about }) => {
           eyebrow={about.eyebrow}
           title={about.sectionHeading}
           subtitle="An executive profile rooted in engineering rigor, strategic capital allocation, and a passion for creating enduring urban assets."
+          editPaths={{ eyebrow: 'about.eyebrow', title: 'about.sectionHeading' }}
         />
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
@@ -44,6 +46,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ about }) => {
                   fit="cover"
                   objectPosition="top"
                   className="rounded-xs"
+                  showImageOverlay={false}
+                  editPaths={{ src: 'about.image' }}
                 />
               </div>
               <motion.div
@@ -69,21 +73,23 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ about }) => {
               </div>
               <div className="space-y-3.5">
                 {about.qualifications.map((qual, idx) => (
-                  <div key={idx} className="flex flex-col">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-sans-body font-semibold text-[#f3f2ee]">
-                        {qual.degree}
-                      </span>
-                      {qual.badge && (
-                        <span className="text-[10px] font-mono text-[#c5a880] px-2 py-0.5 bg-[#c5a880]/10 border border-[#c5a880]/20 rounded-xs font-semibold">
-                          {qual.badge}
+                  <EditableBlock key={idx} path={`about.qualifications.${idx}`} label={qual.degree}>
+                    <div className="flex flex-col">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-sans-body font-semibold text-[#f3f2ee]">
+                          <EditableText path={`about.qualifications.${idx}.degree`}>{qual.degree}</EditableText>
                         </span>
-                      )}
+                        {qual.badge && (
+                          <span className="text-[10px] font-mono text-[#c5a880] px-2 py-0.5 bg-[#c5a880]/10 border border-[#c5a880]/20 rounded-xs font-semibold">
+                            <EditableText path={`about.qualifications.${idx}.badge`}>{qual.badge}</EditableText>
+                          </span>
+                        )}
+                      </div>
+                      <span className="text-xs text-[#8c92a0]">
+                        <EditableText path={`about.qualifications.${idx}.institution`}>{qual.institution}</EditableText>
+                      </span>
                     </div>
-                    <span className="text-xs text-[#8c92a0]">
-                      {qual.institution}
-                    </span>
-                  </div>
+                  </EditableBlock>
                 ))}
               </div>
             </div>
@@ -102,7 +108,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ about }) => {
             <div className="bg-gradient-to-r from-[#171b24] to-[#13161d] p-5 sm:p-6 rounded-sm border-l-4 border-[#c5a880] shadow-md relative">
               <Quote className="w-8 h-8 text-[#c5a880]/20 absolute top-4 right-4 pointer-events-none" />
               <p className="text-sm sm:text-lg font-serif-title italic text-[#e8e6e1] leading-relaxed">
-                "{about.quote}"
+                "<EditableText path="about.quote" as="span">{about.quote}</EditableText>"
               </p>
             </div>
 
@@ -114,13 +120,13 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ about }) => {
                   if (idx > 0 && !isBioExpanded) {
                     return (
                       <p key={idx} className="hidden md:block">
-                        {para}
+                        <EditableText path={`about.bioParagraphs.${idx}`} as="span">{para}</EditableText>
                       </p>
                     );
                   }
                   return (
                     <p key={idx} className="first-letter:text-2xl first-letter:font-serif-title first-letter:text-[#c5a880] first-letter:font-bold">
-                      {para}
+                      <EditableText path={`about.bioParagraphs.${idx}`} as="span">{para}</EditableText>
                     </p>
                   );
                 })}
@@ -143,25 +149,28 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ about }) => {
               </h3>
               <div className="space-y-3 text-xs sm:text-sm text-[#a2a8b8] font-sans-body font-light leading-relaxed mb-6">
                 {about.lifestyleParagraph.map((p, idx) => (
-                  <p key={idx}>{p}</p>
+                  <p key={idx}>
+                    <EditableText path={`about.lifestyleParagraph.${idx}`} as="span">{p}</EditableText>
+                  </p>
                 ))}
               </div>
 
               {/* Personal Highlight Grid */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
                 {about.personalHighlights.map((item, idx) => (
-                  <motion.div
-                    key={idx}
-                    whileHover={{ scale: 1.03 }}
-                    className="bg-[#14171f] p-3 sm:p-3.5 rounded-sm border border-[#232835] flex flex-col gap-1 hover:border-[#c5a880]/40 transition-colors"
-                  >
-                    <span className="text-[10px] uppercase font-mono tracking-wider text-[#c5a880]">
-                      {item.title}
-                    </span>
-                    <span className="text-xs font-sans-body text-[#e8e6e1] font-medium leading-tight">
-                      {item.detail}
-                    </span>
-                  </motion.div>
+                  <EditableBlock key={idx} path={`about.personalHighlights.${idx}`} label={item.title}>
+                    <motion.div
+                      whileHover={{ scale: 1.03 }}
+                      className="bg-[#14171f] p-3 sm:p-3.5 rounded-sm border border-[#232835] flex flex-col gap-1 hover:border-[#c5a880]/40 transition-colors h-full"
+                    >
+                      <span className="text-[10px] uppercase font-mono tracking-wider text-[#c5a880]">
+                        <EditableText path={`about.personalHighlights.${idx}.title`}>{item.title}</EditableText>
+                      </span>
+                      <span className="text-xs font-sans-body text-[#e8e6e1] font-medium leading-tight">
+                        <EditableText path={`about.personalHighlights.${idx}.detail`} as="span">{item.detail}</EditableText>
+                      </span>
+                    </motion.div>
+                  </EditableBlock>
                 ))}
               </div>
             </div>

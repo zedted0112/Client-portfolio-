@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'motion/react';
+import { EditableText } from '../admin/Editable';
 
 interface SectionHeadingProps {
   eyebrow?: string;
@@ -7,6 +8,7 @@ interface SectionHeadingProps {
   subtitle?: string;
   align?: 'left' | 'center' | 'right';
   className?: string;
+  editPaths?: { eyebrow?: string; title?: string; subtitle?: string };
 }
 
 export const SectionHeading: React.FC<SectionHeadingProps> = ({
@@ -14,13 +16,38 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
   title,
   subtitle,
   align = 'left',
-  className = ''
+  className = '',
+  editPaths,
 }) => {
   const alignmentClass = {
     left: 'text-left items-start',
     center: 'text-center items-center mx-auto',
-    right: 'text-right items-end ml-auto'
+    right: 'text-right items-end ml-auto',
   }[align];
+
+  const EyebrowTag = editPaths?.eyebrow ? (
+    <EditableText path={editPaths.eyebrow} className="">
+      {eyebrow}
+    </EditableText>
+  ) : (
+    <span>{eyebrow}</span>
+  );
+
+  const TitleTag = editPaths?.title ? (
+    <EditableText path={editPaths.title} as="span" className="">
+      {title}
+    </EditableText>
+  ) : (
+    title
+  );
+
+  const SubtitleTag = subtitle && editPaths?.subtitle ? (
+    <EditableText path={editPaths.subtitle} as="span" className="">
+      {subtitle}
+    </EditableText>
+  ) : (
+    subtitle
+  );
 
   return (
     <motion.div
@@ -40,21 +67,20 @@ export const SectionHeading: React.FC<SectionHeadingProps> = ({
             className="h-[1px] bg-[#c5a880]"
           />
           <span className="text-[11px] sm:text-xs font-mono uppercase tracking-[0.25em] text-[#c5a880] font-semibold">
-            {eyebrow}
+            {EyebrowTag}
           </span>
         </div>
       )}
-      
+
       <h2 className="text-3xl sm:text-4xl md:text-5xl font-serif-title font-normal tracking-tight text-[#f3f2ee] leading-[1.15]">
-        {title}
+        {TitleTag}
       </h2>
 
       {subtitle && (
         <p className="mt-4 text-sm sm:text-base text-[#9fa4b0] font-sans-body font-light leading-relaxed max-w-2xl">
-          {subtitle}
+          {SubtitleTag}
         </p>
       )}
     </motion.div>
   );
 };
-

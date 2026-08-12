@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { AwardCard } from './AwardCard';
-import { AwardData } from '../types';
+import { AwardData, SectionHeadingOverride } from '../types';
 import { Trophy } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { EditableBlock } from '../admin/Editable';
 
 interface AchievementsSectionProps {
   awards: AwardData[];
+  heading?: SectionHeadingOverride;
 }
 
-export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ awards }) => {
+export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ awards, heading }) => {
   const [mobileIndex, setMobileIndex] = useState(0);
   const [direction, setDirection] = useState<number>(0);
 
@@ -57,9 +59,15 @@ export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ awards
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <SectionHeading
-          eyebrow="RECOGNITION & HONORS"
-          title="Milestones of Excellence"
-          subtitle="Honors conferred by leading international publications, government organizations, and industry bodies for execution leadership."
+          eyebrow={heading?.eyebrow ?? 'RECOGNITION & HONORS'}
+          title={heading?.title ?? 'Milestones of Excellence'}
+          subtitle={heading?.subtitle ?? 'Honors conferred by leading international publications, government organizations, and industry bodies for execution leadership.'}
+          align="center"
+          editPaths={{
+            eyebrow: 'settings.headings.achievements.eyebrow',
+            title: 'settings.headings.achievements.title',
+            subtitle: 'settings.headings.achievements.subtitle',
+          }}
         />
 
         {/* --- MOBILE CAROUSEL (Visible on < md) --- */}
@@ -88,7 +96,7 @@ export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ awards
                   onDragEnd={handleDragEnd}
                   className="w-full"
                 >
-                  <AwardCard award={activeAward} />
+                  <AwardCard award={activeAward} basePath={`awards.${mobileIndex}`} />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -116,8 +124,10 @@ export const AchievementsSection: React.FC<AchievementsSectionProps> = ({ awards
 
         {/* --- DESKTOP GRID (Visible on md+ screens) --- */}
         <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {awards.map((award) => (
-            <AwardCard key={award.id} award={award} />
+          {awards.map((award, idx) => (
+            <EditableBlock key={award.id} path={`awards.${idx}`} label={award.title}>
+              <AwardCard award={award} basePath={`awards.${idx}`} />
+            </EditableBlock>
           ))}
         </div>
 

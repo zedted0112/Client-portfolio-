@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { SectionHeading } from './SectionHeading';
 import { PhilosophyCard } from './PhilosophyCard';
-import { PhilosophyItem } from '../types';
+import { PhilosophyItem, SectionHeadingOverride } from '../types';
 import { Compass } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { EditableBlock } from '../admin/Editable';
 
 interface PhilosophyGridProps {
   philosophy: PhilosophyItem[];
+  heading?: SectionHeadingOverride;
 }
 
-export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) => {
+export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy, heading }) => {
   const [mobileIndex, setMobileIndex] = useState(0);
   const [direction, setDirection] = useState<number>(0);
 
@@ -57,9 +59,15 @@ export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) =>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
         <SectionHeading
-          eyebrow="LEADERSHIP CULTURE"
-          title="The 8 Es of Business"
-          subtitle="My personal strength and leadership philosophy grow from a distinct culture founded on core values:"
+          eyebrow={heading?.eyebrow ?? 'LEADERSHIP CULTURE'}
+          title={heading?.title ?? 'The 8 Es of Business'}
+          subtitle={heading?.subtitle ?? 'My personal strength and leadership philosophy grow from a distinct culture founded on core values:'}
+          align="center"
+          editPaths={{
+            eyebrow: 'settings.headings.philosophy.eyebrow',
+            title: 'settings.headings.philosophy.title',
+            subtitle: 'settings.headings.philosophy.subtitle',
+          }}
         />
 
         {/* --- MOBILE & TOUCH CAROUSEL VIEW (< sm screens) --- */}
@@ -70,6 +78,8 @@ export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) =>
             {philosophy.map((item, idx) => (
               <button
                 key={item.number}
+                type="button"
+                data-edit-allow
                 onClick={() => {
                   setDirection(idx > mobileIndex ? 1 : -1);
                   setMobileIndex(idx);
@@ -110,7 +120,7 @@ export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) =>
                   onDragEnd={handleDragEnd}
                   className="w-full"
                 >
-                  <PhilosophyCard item={activeItem} />
+                  <PhilosophyCard item={activeItem} basePath={`philosophy.${mobileIndex}`} />
                 </motion.div>
               </AnimatePresence>
             </div>
@@ -121,6 +131,8 @@ export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) =>
                 {philosophy.map((_, idx) => (
                   <button
                     key={idx}
+                    type="button"
+                    data-edit-allow
                     onClick={() => {
                       setDirection(idx > mobileIndex ? 1 : -1);
                       setMobileIndex(idx);
@@ -139,8 +151,10 @@ export const PhilosophyGrid: React.FC<PhilosophyGridProps> = ({ philosophy }) =>
 
         {/* --- DESKTOP GRID & TOUCH CAROUSEL OPTION (Visible on sm+ screens) --- */}
         <div className="hidden sm:grid grid-cols-2 lg:grid-cols-4 gap-6">
-          {philosophy.map((item) => (
-            <PhilosophyCard key={item.number} item={item} />
+          {philosophy.map((item, idx) => (
+            <EditableBlock key={item.number} path={`philosophy.${idx}`} label={item.title}>
+              <PhilosophyCard item={item} basePath={`philosophy.${idx}`} />
+            </EditableBlock>
           ))}
         </div>
 
