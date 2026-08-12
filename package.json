@@ -8,7 +8,10 @@
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rm -rf dist",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "publish-site": "bash scripts/publish.sh",
+    "publish-site:deploy": "bash scripts/publish.sh --deploy",
+    "publish-site:push": "bash scripts/publish.sh --no-deploy"
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.14",
