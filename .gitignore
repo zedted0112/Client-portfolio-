@@ -11,7 +11,6 @@ dist/
 # Environment
 .env
 .env.*
-!.env.example
 
 # Source content assets (raw client files — site uses public/)
 Content/
